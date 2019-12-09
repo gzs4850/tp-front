@@ -27,6 +27,10 @@ export default {
           // 一个页面一个对象，以name确定（对应静态路由表里面的name）
           name: 'index'
         }, {
+          name: 'table'
+        }, {
+          name: 'userPassword'
+        }, {
           name: 'level4'
         }, {
           name: 'level4Detail',

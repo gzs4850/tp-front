@@ -24,6 +24,26 @@ const staticRouter = [
         icon: 'el-icon-s-home',
         component: () => import('@/views/pages/PageHome')
       }, {
+        path: '/table',
+        name: 'table',
+        title: '表格',
+        icon: 'el-icon-s-home',
+        component: () => import('@/views/pages/PageTable')
+      }, {
+        path: '/setting',
+        name: 'setting',
+        title: '系统设置',
+        icon: 'el-icon-setting',
+        component: () => import('@/views/layout/TheLayoutEmpty'),
+        children: [
+          {
+            path: '/user/password',
+            name: 'userPassword',
+            title: '项目管理',
+            component: () => import('@/views/pages/setting/PageProject')
+          }
+        ]
+      }, {
         path: '/level1',
         name: 'level1',
         title: '一级目录',
@@ -60,6 +80,20 @@ const staticRouter = [
                 ]
               }
             ]
+          }
+        ]
+      }, {
+        path: '/user',
+        name: 'user',
+        title: '个人设置',
+        icon: 'el-icon-setting',
+        component: () => import('@/views/layout/TheLayoutEmpty'),
+        children: [
+          {
+            path: '/user/password',
+            name: 'userPassword',
+            title: '修改密码',
+            component: () => import('@/views/pages/user/PageUserPassword')
           }
         ]
       }
