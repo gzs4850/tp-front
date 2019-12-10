@@ -37,8 +37,8 @@ const staticRouter = [
         component: () => import('@/views/layout/TheLayoutEmpty'),
         children: [
           {
-            path: '/user/password',
-            name: 'userPassword',
+            path: '/setting/project',
+            name: 'project',
             title: '项目管理',
             component: () => import('@/views/pages/setting/PageProject')
           }

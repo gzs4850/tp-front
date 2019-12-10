@@ -136,6 +136,7 @@ export default {
               message: '查询成功！',
               type: 'success'
             })
+            console.log('----------------', res.data)
             this.pageTotal = res.data.length
             this.tableData = res.data
           })

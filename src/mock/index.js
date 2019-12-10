@@ -29,6 +29,8 @@ export default {
         }, {
           name: 'table'
         }, {
+          name: 'project'
+        }, {
           name: 'userPassword'
         }, {
           name: 'level4'

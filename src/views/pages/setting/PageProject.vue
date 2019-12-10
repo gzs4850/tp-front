@@ -2,11 +2,11 @@
   <div style="width: 100%;">
     <el-card style="margin-top: 20px;">
       <el-form :inline="true" :model="formInline" ref="formInline" :rules="rules">
-        <el-form-item label="项目：" prop="param1">
-          <el-input v-model="formInline.param1" placeholder=""></el-input>
+        <el-form-item label="项目：" prop="id">
+          <el-input v-model="formInline.id" placeholder=""></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit('formInline')">查询</el-button>
+          <el-button type="primary" @click="handleSubmit('formInline')">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right" >
           <el-button type="primary" @click="handleAdd()">新增</el-button>
@@ -79,20 +79,23 @@
 </template>
 
 <script>
-import { requestProject } from '@/api/project'
+// eslint-disable-next-line import/no-duplicates
+// import { requestProject } from '@/api/project'
+// eslint-disable-next-line import/no-duplicates
+import { requestAllProject } from '@/api/project'
 export default {
   name: 'PageProject',
   data () {
     return {
       formInline: {
-        param1: '条件1'
+        id: ''
       },
       tableData: [
       ],
       rules: {
         param1: [
-          { required: true, message: '请输入', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { required: true, message: '请输入', trigger: 'blur' }
+          // { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
         ],
         param2: [
           { required: true, message: '请选择', trigger: 'change' }
@@ -114,13 +117,14 @@ export default {
     onSubmit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          requestProject(this.formInline).then(res => {
+          requestAllProject().then(res => {
             this.$message({
               message: '查询成功！',
               type: 'success'
             })
-            this.pageTotal = res.data.length
-            this.tableData = res.data
+            // this.pageTotal = res.data.length
+            // this.tableData = res.data
+            console.log('----------------', res.data)
           })
         } else {
           console.log('error submit!!')

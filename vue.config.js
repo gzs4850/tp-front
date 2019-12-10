@@ -26,7 +26,8 @@ module.exports = {
           changeOrigin: true,
           pathRewrite: {}
         }
-        result[_path].pathRewrite['^' + _path] = '/'
+        result[_path].pathRewrite['^' + _path] = '/api/'
+        console.log('-----------', result)
         return result
       }
     })()
