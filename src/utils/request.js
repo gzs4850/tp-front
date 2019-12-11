@@ -22,7 +22,7 @@ import { MessageBox, Message } from 'element-ui'
  *        response.data = {
  *          "code": 1,                    // 成功/失败标识，1=成功，-1=失败
  *          "data": {},                   // 成功时可选参数，请求的响应数据
- *          "errorMessage": "用户名字重复"  // 失败时必需参数，错误提示
+ *          "message": "用户名字重复"  // 失败时必需参数，错误提示
  *        }
  *
  * 二、sessionRequest：
@@ -73,7 +73,7 @@ export const request = (url, params = {}, config = {}, autoErrorRes = true, auto
     // 自动处理返回格式错误
     if (autoErrorData && res.data.hasOwnProperty('code') && res.data.code !== 1) {
       console.error(res.data)
-      const errMsg = res.data.errorMessage || '未知的服务器错误，请联系管理员！'
+      const errMsg = res.data.message || '未知的服务器错误，请联系管理员！'
       const errCod = res.data.code
       MessageBox.alert(errMsg, '请求异常：' + errCod, { confirmButtonText: '确定' })
       return Promise.reject(res.data)

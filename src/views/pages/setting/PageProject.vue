@@ -2,11 +2,11 @@
   <div style="width: 100%;">
     <el-card style="margin-top: 20px;">
       <el-form :inline="true" :model="formInline" ref="formInline" :rules="rules">
-        <el-form-item label="项目：" prop="id">
-          <el-input v-model="formInline.id" placeholder=""></el-input>
+        <el-form-item label="项目名称：" prop="name">
+          <el-input v-model="formInline.pro_name" placeholder=""></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSubmit('formInline')">查询</el-button>
+          <el-button type="primary" @click="handleQuery('formInline')">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right" >
           <el-button type="primary" @click="handleAdd()">新增</el-button>
@@ -17,21 +17,20 @@
         style="width: 100%">
         <el-table-column label="ID">
           <template slot-scope="scope">
-            <i class="el-icon-time"></i>
-            <span style="margin-left: 10px">{{ scope.row.date }}</span>
+            <span style="margin-left: 10px">{{ scope.row.id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+            <span style="margin-left: 10px">{{ scope.row.pro_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="描述" width="180">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
-              <p>描述: {{ scope.row.address }}</p>
+              <p>描述: {{ scope.row.pro_desc }}</p>
               <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.address }}</el-tag>
+                <el-tag size="medium">{{ scope.row.pro_desc }}</el-tag>
               </div>
             </el-popover>
           </template>
@@ -63,10 +62,10 @@
       <el-dialog title="项目信息" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="名称" label-width="120px">
-            <el-input v-model="form.name" auto-complete="off"></el-input>
+            <el-input v-model="form.pro_name" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="描述" label-width="120px">
-            <el-input type="textarea" :rows="2" v-model="form.address" auto-complete="off"></el-input>
+            <el-input type="textarea" :rows="2" v-model="form.pro_desc" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -79,16 +78,13 @@
 </template>
 
 <script>
-// eslint-disable-next-line import/no-duplicates
-// import { requestProject } from '@/api/project'
-// eslint-disable-next-line import/no-duplicates
-import { requestAllProject } from '@/api/project'
+import { requestAllProject, requestProjectByName, addProject, updateProject, delProject } from '@/api/project'
 export default {
   name: 'PageProject',
   data () {
     return {
       formInline: {
-        id: ''
+        pro_name: ''
       },
       tableData: [
       ],
@@ -96,9 +92,6 @@ export default {
         param1: [
           { required: true, message: '请输入', trigger: 'blur' }
           // { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
-        ],
-        param2: [
-          { required: true, message: '请选择', trigger: 'change' }
         ]
       },
       currentPage: 1,
@@ -106,54 +99,64 @@ export default {
       pageTotal: 0,
       dialogFormVisible: false,
       form: {
-        name: '',
-        date: '',
-        address: '',
+        pro_name: '',
+        pro_desc: '',
         index: 0
       }
     }
   },
   methods: {
-    onSubmit (formName) {
+    queryAll () {
+      requestAllProject().then(res => {
+        this.pageTotal = res.projects.length
+        this.tableData = res.projects
+      })
+    },
+    handleQuery (formName) {
       this.$refs[formName].validate((valid) => {
+        console.log('pro_name:', this.formInline.pro_name)
         if (valid) {
-          requestAllProject().then(res => {
-            this.$message({
-              message: '查询成功！',
-              type: 'success'
+          if (this.formInline.pro_name == null || this.formInline.pro_name === '') {
+            this.queryAll()
+          } else {
+            requestProjectByName(this.formInline.pro_name).then(res => {
+              this.$message({
+                message: '查询成功！',
+                type: 'success'
+              })
+              // console.log('projects:', res.projects)
+              this.pageTotal = res.projects.length
+              this.tableData = [res.projects]
             })
-            // this.pageTotal = res.data.length
-            // this.tableData = res.data
-            console.log('----------------', res.data)
-          })
+          }
         } else {
           console.log('error submit!!')
           return false
         }
       })
     },
-    handleAdd (index, row) {
+    handleAdd () {
       this.form.dialogType = 'add'
       this.form.index = ''
-      this.form.name = ''
-      this.form.date = ''
-      this.form.address = ''
+      this.form.pro_name = ''
+      this.form.pro_desc = ''
       this.dialogFormVisible = true
     },
     handleEdit (index, row) {
       this.form.dialogType = 'edit'
       this.form.index = index + (this.currentPage - 1) * this.pageSize
-      this.form.name = row.name
-      this.form.date = row.date
-      this.form.address = row.address
+      this.form.pro_name = row.pro_name
+      this.form.pro_desc = row.pro_desc
       this.dialogFormVisible = true
     },
     handleDelete (index, row) {
       this.tableData.splice(index + (this.currentPage - 1) * this.pageSize, 1)
       this.pageTotal = this.tableData.length
-      this.$message({
-        message: '删除' + row.name + '成功！',
-        type: 'success'
+      delProject(row.id, {}).then(res => {
+        this.$message({
+          message: '删除' + row.pro_name + '成功！',
+          type: 'success'
+        })
       })
     },
     handleSizeChange (size) {
@@ -163,22 +166,29 @@ export default {
       this.currentPage = currentPage
     },
     modifyUser () {
-      this.tableData[this.form.index].name = this.form.name
-      this.tableData[this.form.index].date = this.form.date
-      this.tableData[this.form.index].address = this.form.address
       this.dialogFormVisible = false
       if (this.form.dialogType === 'add') {
-        this.$message({
-          message: '新增' + this.form.name + '成功！',
-          type: 'success'
+        addProject({ 'pro_name': this.form.pro_name, 'pro_desc': this.form.pro_desc }).then(res => {
+          this.$message({
+            message: '新增' + this.form.pro_name + '成功！',
+            type: 'success'
+          })
         })
+        this.queryAll()
       } else {
-        this.$message({
-          message: '修改' + this.form.name + '成功！',
-          type: 'success'
+        updateProject(this.form.index, { 'pro_name': this.form.pro_name, 'pro_desc': this.form.pro_desc }).then(res => {
+          this.tableData[this.form.index].pro_name = this.form.pro_name
+          this.tableData[this.form.index].pro_desc = this.form.pro_desc
+          this.$message({
+            message: '修改' + this.form.pro_name + '成功！',
+            type: 'success'
+          })
         })
       }
     }
+  },
+  mounted: function () {
+    this.queryAll()
   }
 }
 </script>
