@@ -41,6 +41,12 @@ const staticRouter = [
             name: 'project',
             title: '项目管理',
             component: () => import('@/views/pages/setting/PageProject')
+          },
+          {
+            path: '/setting/system',
+            name: 'system',
+            title: '子系统管理',
+            component: () => import('@/views/pages/setting/PageSystem')
           }
         ]
       }, {
