@@ -30,6 +30,20 @@ const staticRouter = [
         icon: 'el-icon-s-home',
         component: () => import('@/views/pages/PageTable')
       }, {
+        path: '/interface',
+        name: 'interface',
+        title: '接口测试',
+        icon: 'el-icon-setting',
+        component: () => import('@/views/layout/TheLayoutEmpty'),
+        children: [
+          {
+            path: '/interface/interface',
+            name: 'interface',
+            title: '接口管理',
+            component: () => import('@/views/pages/interface/PageInterface')
+          }
+        ]
+      }, {
         path: '/setting',
         name: 'setting',
         title: '系统设置',

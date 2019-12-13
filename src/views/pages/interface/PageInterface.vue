@@ -2,12 +2,17 @@
   <div style="width: 100%;">
     <el-card style="margin-top: 20px;">
       <el-form :inline="true" :model="formInline" ref="formInline">
-        <el-form-item label="子系统名称：" prop="sys_name">
-          <el-input v-model="formInline.sys_name" placeholder=""></el-input>
+        <el-form-item label="接口名称" prop="if_name">
+          <el-input v-model="formInline.if_name" placeholder=""></el-input>
         </el-form-item>
-        <el-form-item label="项目：" prop="project_id">
-          <el-select v-model="formInline.project_id" clearable placeholder="" style="width:100%">
+        <el-form-item label="项目" prop="project_id">
+          <el-select v-model="formInline.project_id" clearable @change="querySystemList" placeholder="" style="width:100%">
             <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="子系统" prop="sys_id">
+          <el-select v-model="formInline.sys_id" clearable placeholder="" style="width:100%">
+            <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -27,6 +32,26 @@
         </el-table-column>
         <el-table-column label="名称">
           <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.if_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="方法">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.if_method }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="协议">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.if_protocol }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="路径">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.if_url }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="子系统">
+          <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.sys_name }}</span>
           </template>
         </el-table-column>
@@ -37,12 +62,7 @@
         </el-table-column>
         <el-table-column label="描述" width="180">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="top">
-              <p>描述: {{ scope.row.sys_desc }}</p>
-              <div slot="reference" class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.sys_desc }}</el-tag>
-              </div>
-            </el-popover>
+            <span style="margin-left: 10px">{{ scope.row.if_desc }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -69,18 +89,32 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="pageTotal">
       </el-pagination>
-      <el-dialog title="子系统信息" :visible.sync="dialogFormVisible">
+      <el-dialog title="接口信息" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="名称" label-width="120px">
-            <el-input v-model="form.sys_name" auto-complete="off"></el-input>
+            <el-input v-model="form.if_name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="方法" label-width="120px">
+            <el-input v-model="form.if_method" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="协议" label-width="120px">
+            <el-input v-model="form.if_protocol" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="路径" label-width="120px">
+            <el-input v-model="form.if_url" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="项目" prop="project_id" label-width="120px">
-            <el-select v-model="form.project_id" placeholder="" @change="onSelectedDrug" style="width:100%">
+            <el-select v-model="form.project_id" placeholder="" style="width:100%">
               <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="子系统" prop="project_id" label-width="120px">
+            <el-select v-model="form.sys_id" placeholder="" style="width:100%">
+              <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="描述" label-width="120px">
-            <el-input type="textarea" :rows="2" v-model="form.sys_desc" auto-complete="off"></el-input>
+            <el-input type="textarea" :rows="2" v-model="form.if_desc" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -93,17 +127,20 @@
 </template>
 
 <script>
-import { requestAllSystem, requestSystemBySearch, addSystem, updateSystem, delSystem } from '@/api/system'
+import { requestInterface, addInterface, updateInterface, delInterface } from '@/api/interface'
 import { requestAllProject } from '@/api/project'
+import { requestSystemBySearch } from '@/api/system'
 export default {
-  name: 'PageSystem',
+  name: 'PageInterface',
   data () {
     return {
       formInline: {
-        sys_name: '',
-        project_id: ''
+        if_name: '',
+        project_id: '',
+        sys_id: ''
       },
       proList: [],
+      sysList: [],
       tableData: [],
       currentPage: 1,
       pageSize: 10,
@@ -111,44 +148,41 @@ export default {
       dialogFormVisible: false,
       form: {
         id: '',
-        sys_name: '',
+        if_name: '',
+        if_method: '',
+        if_protocol: '',
+        if_url: '',
         project_id: '',
-        sys_desc: '',
+        sys_id: '',
+        if_desc: '',
         index: 0
       }
     }
   },
   methods: {
-    queryAll () {
-      requestAllSystem().then(res => {
-        this.pageTotal = res.systems.length
-        this.tableData = res.systems
-      })
-    },
     queryProjectList () {
       requestAllProject().then(res => {
         this.proList = res.projects
       })
     },
+    querySystemList () {
+      requestSystemBySearch(this.formInline).then(res => {
+        this.sysList = res.systems
+      })
+    },
     handleQuery (formName) {
       this.$refs[formName].validate((valid) => {
-        console.log('sys_name:', this.formInline.sys_name)
-        console.log('project_id:', this.formInline.project_id)
         if (valid) {
-          if (this.formInline.sys_name === '' && this.formInline.project_id === '') {
-            this.queryAll()
-          } else {
-            console.log('formInline----', this.formInline)
-            requestSystemBySearch(this.formInline).then(res => {
-              this.$message({
-                message: '查询成功！',
-                type: 'success'
-              })
-              // console.log('projects:', res.projects)
-              this.pageTotal = res.systems.length
-              this.tableData = res.systems
+          console.log('formInline----', this.formInline)
+          requestInterface(this.formInline).then(res => {
+            this.$message({
+              message: '查询成功！',
+              type: 'success'
             })
-          }
+            // console.log('projects:', res.projects)
+            this.pageTotal = res.interfaces.length
+            this.tableData = res.interfaces
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -158,27 +192,36 @@ export default {
     handleAdd () {
       this.form.dialogType = 'add'
       this.form.index = ''
-      this.form.sys_name = ''
+      this.form.if_name = ''
+      this.form.if_method = ''
+      this.form.if_protocol = ''
+      this.form.if_url = ''
       this.form.project_id = ''
-      this.form.sys_desc = ''
+      this.form.sys_id = ''
+      this.form.if_desc = ''
       this.dialogFormVisible = true
     },
     handleEdit (index, row) {
       this.form.dialogType = 'edit'
       this.form.index = index + (this.currentPage - 1) * this.pageSize
       this.form.id = row.id
-      this.form.sys_name = row.sys_name
+      this.form.if_name = row.if_name
+      this.form.if_method = row.if_method
+      this.form.if_protocol = row.if_protocol
+      this.form.if_url = row.if_url
       this.form.pro_name = row.pro_name
       this.form.project_id = row.project_id
-      this.form.sys_desc = row.sys_desc
+      this.form.sys_name = row.sys_name
+      this.form.sys_id = row.sys_id
+      this.form.if_desc = row.if_desc
       this.dialogFormVisible = true
     },
     handleDelete (index, row) {
       this.tableData.splice(index + (this.currentPage - 1) * this.pageSize, 1)
       this.pageTotal = this.tableData.length
-      delSystem(row.id, {}).then(res => {
+      delInterface(row.id, {}).then(res => {
         this.$message({
-          message: '删除' + row.sys_name + '成功！',
+          message: '删除' + row.if_name + '成功！',
           type: 'success'
         })
       })
@@ -192,15 +235,15 @@ export default {
     modifyUser () {
       this.dialogFormVisible = false
       if (this.form.dialogType === 'add') {
-        addSystem({ 'sys_name': this.form.sys_name, 'project_id': this.form.project_id, 'sys_desc': this.form.sys_desc }).then(res => {
+        addInterface(this.form).then(res => {
           this.$message({
-            message: '新增' + this.form.sys_name + '成功！',
+            message: '新增' + this.form.if_name + '成功！',
             type: 'success'
           })
         })
         this.queryAll()
       } else {
-        updateSystem(this.form.id, { 'sys_name': this.form.sys_name, 'project_id': this.form.project_id, 'sys_desc': this.form.sys_desc }).then(res => {
+        updateInterface(this.form.id, { 'sys_name': this.form.sys_name, 'project_id': this.form.project_id, 'sys_desc': this.form.sys_desc }).then(res => {
           this.tableData[this.form.index].sys_name = this.form.sys_name
           this.tableData[this.form.index].sys_desc = this.form.sys_desc
           this.tableData[this.form.index].pro_name = this.form.pro_name
@@ -210,19 +253,19 @@ export default {
           })
         })
       }
-    },
-    onSelectedDrug (e) {
-      let obj = {}
-      obj = this.proList.find((item) => { // 这里的proList就是上面遍历的数据源
-        return item.id === e// 筛选出匹配数据
-      })
-      this.form.pro_name = obj.pro_name
-      // console.log(obj.pro_name)// 获取的 name
-      // console.log(e)// 获取的 id
     }
+  //   onSelectedDrug (e) {
+  //     let obj = {}
+  //     obj = this.tableData.find((item) => { // 这里的proList就是上面遍历的数据源
+  //       return item.id === e// 筛选出匹配数据
+  //     })
+  //     this.form.pro_name = obj.pro_name
+  //     console.log(obj.pro_name)// 获取的 name
+  //     console.log(e)// 获取的 id
+  //   }
   },
   mounted: function () {
-    this.queryAll()
+    this.handleQuery('formInline')
     this.queryProjectList()
   }
 }

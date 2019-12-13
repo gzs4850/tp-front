@@ -99,6 +99,7 @@ export default {
       pageTotal: 0,
       dialogFormVisible: false,
       form: {
+        id: '',
         pro_name: '',
         pro_desc: '',
         index: 0
@@ -116,7 +117,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         console.log('pro_name:', this.formInline.pro_name)
         if (valid) {
-          if (this.formInline.pro_name == null || this.formInline.pro_name === '') {
+          if (this.formInline.pro_name === '') {
             this.queryAll()
           } else {
             requestProjectByName(this.formInline.pro_name).then(res => {
@@ -126,7 +127,7 @@ export default {
               })
               // console.log('projects:', res.projects)
               this.pageTotal = res.projects.length
-              this.tableData = [res.projects]
+              this.tableData = res.projects
             })
           }
         } else {
@@ -145,6 +146,7 @@ export default {
     handleEdit (index, row) {
       this.form.dialogType = 'edit'
       this.form.index = index + (this.currentPage - 1) * this.pageSize
+      this.form.id = row.id
       this.form.pro_name = row.pro_name
       this.form.pro_desc = row.pro_desc
       this.dialogFormVisible = true
@@ -176,7 +178,7 @@ export default {
         })
         this.queryAll()
       } else {
-        updateProject(this.form.index, { 'pro_name': this.form.pro_name, 'pro_desc': this.form.pro_desc }).then(res => {
+        updateProject(this.form.id, { 'pro_name': this.form.pro_name, 'pro_desc': this.form.pro_desc }).then(res => {
           this.tableData[this.form.index].pro_name = this.form.pro_name
           this.tableData[this.form.index].pro_desc = this.form.pro_desc
           this.$message({
