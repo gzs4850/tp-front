@@ -104,12 +104,12 @@
             <el-input v-model="form.if_url" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="项目" prop="project_id" label-width="120px">
-            <el-select v-model="form.project_id" placeholder="" style="width:100%">
+            <el-select v-model="form.project_id" @change="onSelectedProDrug" placeholder="" style="width:100%">
               <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="子系统" prop="project_id" label-width="120px">
-            <el-select v-model="form.sys_id" placeholder="" style="width:100%">
+          <el-form-item label="子系统" prop="system_id" label-width="120px">
+            <el-select v-model="form.system_id" @change="onSelectedSysDrug" placeholder="" style="width:100%">
               <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
@@ -153,7 +153,7 @@ export default {
         if_protocol: '',
         if_url: '',
         project_id: '',
-        sys_id: '',
+        system_id: '',
         if_desc: '',
         index: 0
       }
@@ -197,7 +197,7 @@ export default {
       this.form.if_protocol = ''
       this.form.if_url = ''
       this.form.project_id = ''
-      this.form.sys_id = ''
+      this.form.system_id = ''
       this.form.if_desc = ''
       this.dialogFormVisible = true
     },
@@ -212,7 +212,7 @@ export default {
       this.form.pro_name = row.pro_name
       this.form.project_id = row.project_id
       this.form.sys_name = row.sys_name
-      this.form.sys_id = row.sys_id
+      this.form.system_id = row.system_id
       this.form.if_desc = row.if_desc
       this.dialogFormVisible = true
     },
@@ -241,28 +241,38 @@ export default {
             type: 'success'
           })
         })
-        this.queryAll()
+        this.handleQuery('formInline')
       } else {
-        updateInterface(this.form.id, { 'sys_name': this.form.sys_name, 'project_id': this.form.project_id, 'sys_desc': this.form.sys_desc }).then(res => {
-          this.tableData[this.form.index].sys_name = this.form.sys_name
-          this.tableData[this.form.index].sys_desc = this.form.sys_desc
+        updateInterface(this.form.id, this.form).then(res => {
+          this.tableData[this.form.index].if_name = this.form.if_name
+          this.tableData[this.form.index].if_method = this.form.if_method
+          this.tableData[this.form.index].if_protocol = this.form.if_protocol
+          this.tableData[this.form.index].if_url = this.form.if_url
           this.tableData[this.form.index].pro_name = this.form.pro_name
+          this.tableData[this.form.index].sys_name = this.form.sys_name
+          this.tableData[this.form.index].if_desc = this.form.if_desc
           this.$message({
-            message: '修改' + this.form.sys_name + '成功！',
+            message: '修改' + this.form.if_name + '成功！',
             type: 'success'
           })
         })
       }
+    },
+    onSelectedProDrug (e) {
+      this.querySystemList()
+      let obj = {}
+      obj = this.proList.find((item) => { // 这里的proList就是上面遍历的数据源
+        return item.id === e// 筛选出匹配数据
+      })
+      this.form.pro_name = obj.pro_name
+    },
+    onSelectedSysDrug (e) {
+      let obj = {}
+      obj = this.sysList.find((item) => { // 这里的proList就是上面遍历的数据源
+        return item.id === e// 筛选出匹配数据
+      })
+      this.form.sys_name = obj.sys_name
     }
-  //   onSelectedDrug (e) {
-  //     let obj = {}
-  //     obj = this.tableData.find((item) => { // 这里的proList就是上面遍历的数据源
-  //       return item.id === e// 筛选出匹配数据
-  //     })
-  //     this.form.pro_name = obj.pro_name
-  //     console.log(obj.pro_name)// 获取的 name
-  //     console.log(e)// 获取的 id
-  //   }
   },
   mounted: function () {
     this.handleQuery('formInline')
