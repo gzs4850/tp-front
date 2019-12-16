@@ -6,7 +6,8 @@
           <el-input v-model="formInline.if_name" placeholder=""></el-input>
         </el-form-item>
         <el-form-item label="项目" prop="project_id">
-          <el-select v-model="formInline.project_id" clearable @change="querySystemList" placeholder="" style="width:100%">
+          <el-select v-model="formInline.project_id" clearable @change="querySystemList" placeholder=""
+                     style="width:100%">
             <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -18,7 +19,7 @@
         <el-form-item>
           <el-button type="primary" @click="handleQuery('formInline')">查询</el-button>
         </el-form-item>
-        <el-form-item style="float:right" >
+        <el-form-item style="float:right">
           <el-button type="primary" @click="handleAdd()">新增</el-button>
         </el-form-item>
       </el-form>
@@ -94,11 +95,17 @@
           <el-form-item label="名称" label-width="120px">
             <el-input v-model="form.if_name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="方法" label-width="120px">
-            <el-input v-model="form.if_method" auto-complete="off"></el-input>
+          <el-form-item label="方法" prop="if_method" label-width="120px">
+            <el-select v-model="form.if_method" placeholder="" style="width:100%">
+              <el-option v-for="item in methodList" :key="item.value" :label="item.label"
+                         :value="item.value"></el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="协议" label-width="120px">
-            <el-input v-model="form.if_protocol" auto-complete="off"></el-input>
+          <el-form-item label="协议" prop="if_protocol" label-width="120px">
+            <el-select v-model="form.if_protocol" placeholder="" style="width:100%">
+              <el-option v-for="item in protocolList" :key="item.value" :label="item.label"
+                         :value="item.value"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="路径" label-width="120px">
             <el-input v-model="form.if_url" auto-complete="off"></el-input>
@@ -130,6 +137,7 @@
 import { requestInterface, addInterface, updateInterface, delInterface } from '@/api/interface'
 import { requestAllProject } from '@/api/project'
 import { requestSystemBySearch } from '@/api/system'
+
 export default {
   name: 'PageInterface',
   data () {
@@ -139,6 +147,26 @@ export default {
         project_id: '',
         sys_id: ''
       },
+      methodList: [{
+        value: 'GET',
+        label: 'GET'
+      }, {
+        value: 'POST',
+        label: 'POST'
+      }, {
+        value: 'PUT',
+        label: 'PUT'
+      }, {
+        value: 'DELETE',
+        label: 'DELETE'
+      }],
+      protocolList: [{
+        value: 'HTTP',
+        label: 'HTTP'
+      }, {
+        value: 'DUBBO',
+        label: 'DUBBO'
+      }],
       proList: [],
       sysList: [],
       tableData: [],
@@ -194,7 +222,7 @@ export default {
       this.form.index = ''
       this.form.if_name = ''
       this.form.if_method = ''
-      this.form.if_protocol = ''
+      this.form.if_protocol = 'HTTP'
       this.form.if_url = ''
       this.form.project_id = ''
       this.form.system_id = ''

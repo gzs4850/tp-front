@@ -41,6 +41,12 @@ const staticRouter = [
             name: 'interface',
             title: '接口管理',
             component: () => import('@/views/pages/interface/PageInterface')
+          },
+          {
+            path: '/interface/ifcase',
+            name: 'ifcase',
+            title: '用例管理',
+            component: () => import('@/views/pages/interface/PageIfcase')
           }
         ]
       }, {
