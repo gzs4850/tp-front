@@ -119,11 +119,6 @@
           <el-table
             :data="tableCase"
             style="width: 100%">
-<!--            <el-table-column label="ID">-->
-<!--              <template slot-scope="scope">-->
-<!--                <span style="margin-left: 5px">{{ scope.row.id }}</span>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
             <el-table-column label="顺序">
               <template slot-scope="scope">
                 <span style="margin-left: 5px">{{ scope.row.ordernum }}</span>
@@ -157,19 +152,19 @@
               <el-input v-model="form.case_name" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="项目" prop="project_id" label-width="120px">
-              <el-select v-model="form.pro_name" @change="onSelectedProDrug($event, form.project_id)" placeholder=""
+              <el-select v-model="form.project_id" @change="onSelectedProDrug($event, form.project_id)" placeholder=""
                          style="width:100%">
                 <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="子系统" prop="system_id" label-width="120px">
-              <el-select v-model="form.sys_name" @change="onSelectedSysDrug($event, form.system_id)" placeholder=""
+              <el-select v-model="form.system_id" @change="onSelectedSysDrug($event, form.system_id)" placeholder=""
                          style="width:100%">
                 <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="接口" prop="system_id" label-width="120px">
-              <el-select v-model="form.if_name" @change="onSelectedIfDrug" placeholder="" style="width:100%">
+              <el-select v-model="form.interface_id" @change="onSelectedIfDrug" placeholder="" style="width:100%">
                 <el-option v-for="item in ifList" :key="item.id" :label="item.if_name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
@@ -242,7 +237,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogHeader = false">取 消</el-button>
-            <el-button type="primary" @click="modifyRef()">确 定</el-button>
+            <el-button type="primary" @click="modifyHeader()">确 定</el-button>
           </div>
         </el-dialog>
       </el-row>
@@ -271,12 +266,14 @@ export default {
       caseList: [],
       tableData: [],
       tableCaseList: [],
+      tableHeader: [],
       currentCaseId: '',
       currentPage: 1,
       pageSize: 10,
       pageTotal: 0,
       dialogFormVisible: false,
       dialogCaseref: false,
+      dialogHeader: false,
       form: {
         id: '',
         case_name: '',
@@ -486,6 +483,45 @@ export default {
           type: 'success'
         })
       })
+    },
+    headerAdd () {
+      this.headerInfo.dialogType = 'add'
+      this.headerInfo.key = ''
+      this.headerInfo.value = ''
+      this.dialogHeader = true
+    },
+    headerEdit (index, row) {
+      this.headerInfo.dialogType = 'edit'
+      this.headerInfo.index = index
+      this.headerInfo.key = row.key
+      this.headerInfo.value = row.value
+      this.dialogHeader = true
+    },
+    headerDelete (index, row) {
+      this.tableHeader.splice(index, 1)
+      this.$message({
+        message: '删除' + row.key + '成功！',
+        type: 'success'
+      })
+    },
+    modifyHeader () {
+      this.dialogHeader = false
+      if (this.headerInfo.dialogType === 'add') {
+        this.tableHeader.splice(-1, 0, this.headerInfo)
+        this.$message({
+          message: '新增' + this.headerInfo.key + '成功！',
+          type: 'success'
+        })
+      } else {
+        // this.tableHeader.splice(this.headerInfo.index, 1)
+        this.tableHeader.push(this.headerInfo)
+        this.tableHeader[this.headerInfo.index].key = this.headerInfo.key
+        this.tableHeader[this.headerInfo.index].value = this.headerInfo.value
+        this.$message({
+          message: '修改' + this.headerInfo.key + '成功！',
+          type: 'success'
+        })
+      }
     }
   },
   mounted: function () {
