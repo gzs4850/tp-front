@@ -593,18 +593,19 @@ export default {
     openDetails (row) {
       getIfcase(row.id, {}).then(res => {
         this.baseInfo = res.testcases[0]
-        this.tableHeader = this.baseInfo.request_head
-        this.tableAssert = this.baseInfo.check_json
-        this.tableExtract = this.baseInfo.ref_json
-        this.reqjson = this.baseInfo.request_json
-        for (let i in this.baseInfo.request_head) {
-          let o = {}
-          o[i].key = this.baseInfo.request_head[i].key
-          o[i].value = this.baseInfo.request_head[i].value
-          this.tableHeader.push(o)
+        this.tableHeader = []
+        this.tableAssert = []
+        this.tableExtract = []
+        this.reqjson = ''
+        for (let [key, val] of Object.entries(this.baseInfo.request_head)) {
+          this.tableHeader.push({ key: key, value: val })
         }
-        console.log('------baseInfo------', this.baseInfo)
-        console.log('------this.tableHeader------', this.tableHeader)
+        for (let [key, val] of Object.entries(this.baseInfo.check_json)) {
+          console.log('key,val---------:', key, val)
+          let str = key.split('.', 2)
+          this.tableAssert.push({ var_obj: str[0], var_expect: val, var_express: str[1] })
+          console.log('tableAssert---------:', this.tableAssert)
+        }
       })
       this.getReflist(row.id)
     },
@@ -835,6 +836,7 @@ export default {
     },
     assertAdd () {
       this.tableAssert.push({
+        var_obj: null,
         var_express: null,
         var_expect: null
       })
