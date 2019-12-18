@@ -5,26 +5,26 @@
         <el-col :span="10">
           <el-form :inline="true" :model="formInline" ref="formInline">
             <el-form-item>
-              <el-select v-model="formInline.project_id" clearable
+              <el-select v-model="formInline.project_id" clearable size="small"
                          @change="querySystemList($event, formInline.project_id)" placeholder="项目" style="width:30%">
                 <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
               </el-select>
-              <el-select v-model="formInline.sys_id" clearable @change="queryIfList($event, formInline.sys_id)"
+              <el-select v-model="formInline.sys_id" clearable size="small" @change="queryIfList($event, formInline.sys_id)"
                          placeholder="子系统" style="width:30%">
                 <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
               </el-select>
-              <el-select v-model="formInline.if_id" clearable placeholder="接口" style="width:40%">
+              <el-select v-model="formInline.if_id" clearable size="small" placeholder="接口" style="width:40%">
                 <el-option v-for="item in ifList" :key="item.id" :label="item.if_name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item style="width:60%">
-              <el-input v-model="formInline.if_name" placeholder="用例名称"></el-input>
+              <el-input v-model="formInline.if_name" size="small" placeholder="用例名称"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="handleQuery('formInline')">查询</el-button>
+              <el-button type="primary" size="mini" @click="handleQuery('formInline')">查询</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="handleAdd()">新增</el-button>
+              <el-button type="primary" size="mini" @click="handleAdd()">新增</el-button>
             </el-form-item>
           </el-form>
           <el-table
@@ -68,56 +68,24 @@
         <el-col :span="14">
           <el-form :inline="true" :model="baseInfo" ref="formInline">
             <el-form-item label="名称" prop="case_name">
-              <el-input v-model="baseInfo.case_name" auto-complete="off"></el-input>
+              <el-input v-model="baseInfo.case_name" size="small" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="URL" prop="case_url">
-              <el-input v-model="baseInfo.url" auto-complete="off"></el-input>
+              <el-input v-model="baseInfo.url" size="small" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="调试后台" prop="base_url">
-              <el-input v-model="baseInfo.base_url" placeholder=""></el-input>
+              <el-input v-model="baseInfo.base_url" size="small" placeholder=""></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary">保存</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary">调试</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary">结果查看</el-button>
+              <el-button type="primary" size="mini">保存</el-button>
             </el-form-item>
           </el-form>
 
-          <el-button type="primary" style="float:right" @click="headerAdd()">添加请求头</el-button>
+          <el-button type="primary" size="mini" @click="refAdd()">添加依赖</el-button>
+          <el-button type="primary" style="float:right" size="mini">结果查看</el-button>
+          <el-button type="primary" style="float:right" size="mini">调试</el-button>
           <el-table
-            :data="tableHeader"
-            style="width: 100%">
-            <el-table-column label="字段">
-              <template slot-scope="scope">
-                <span style="margin-left: 5px">{{ scope.row.key }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="值">
-              <template slot-scope="scope">
-                <span style="margin-left: 5px">{{ scope.row.value }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  @click="headerEdit(scope.$index, scope.row)">编辑
-                </el-button>
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click="headerDelete(scope.$index, scope.row)">删除
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-button type="primary" style="float:right" @click="refAdd()">添加依赖</el-button>
-          <el-table
-            :data="tableCase"
+            :data="tableCaseref"
             style="width: 100%">
             <el-table-column label="顺序">
               <template slot-scope="scope">
@@ -144,8 +112,274 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-tabs>
+            <el-tab-pane label="请求头设置">
+              <el-button type="primary" size="mini" @click="headerAdd">添加请求头</el-button>
+              <el-button type="primary" size="mini" @click="headerDelete">删除请求头</el-button>
+              <el-table
+                :data="tableHeader"
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="字段">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.key"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="值">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.value"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="字段提取">
+              <el-button type="primary" size="mini" @click="extractAdd">提取字段</el-button>
+              <el-button type="primary" size="mini" @click="extractDelete">删除提取</el-button>
+              <el-table
+                :data="tableExtract"
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55">
+                </el-table-column>
+                <!--            <el-table-column-->
+                <!--              align="center"-->
+                <!--              label="用例名称">-->
+                <!--              <template slot-scope="scope">-->
+                <!--                <el-select v-model="scope.row.case_id" placeholder="请选择" size="small">-->
+                <!--                  <el-option-->
+                <!--                    v-for="item in tableCaseref"-->
+                <!--                    :key="item.refer_mockid"-->
+                <!--                    :label="item.refer_casename"-->
+                <!--                    :value="item.refer_mockid">-->
+                <!--                  </el-option>-->
+                <!--                </el-select>-->
+                <!--              </template>-->
+                <!--            </el-table-column>-->
+                <el-table-column
+                  align="center"
+                  label="提取对象">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.extract_obj" placeholder="请选择" size="small">
+                      <el-option
+                        v-for="item in extractOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="变量名">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.var_name"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="提取表达式">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.var_express"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="断言设置">
+              <el-button type="primary" size="mini" @click="assertAdd">添加断言</el-button>
+              <el-button type="primary" size="mini" @click="assertDelete">删除断言</el-button>
+              <el-table
+                :data="tableAssert"
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="断言变量">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.var_express" placeholder="请选择" size="small">
+                      <el-option
+                        v-for="item in tableExtract"
+                        :key="item.var_express"
+                        :label="item.var_name"
+                        :value="item.var_express">
+                      </el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="期望值">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.var_expect"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+          </el-tabs>
+<!--          <el-button type="primary" size="mini" @click="headerAdd()">添加请求头</el-button>-->
+<!--          <el-table-->
+<!--            :data="tableHeader"-->
+<!--            style="width: 100%">-->
+<!--            <el-table-column label="字段">-->
+<!--              <template slot-scope="scope">-->
+<!--                <span style="margin-left: 5px">{{ scope.row.key }}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="值">-->
+<!--              <template slot-scope="scope">-->
+<!--                <span style="margin-left: 5px">{{ scope.row.value }}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="操作">-->
+<!--              <template slot-scope="scope">-->
+<!--                <el-button-->
+<!--                  size="mini"-->
+<!--                  @click="headerEdit(scope.$index, scope.row)">编辑-->
+<!--                </el-button>-->
+<!--                <el-button-->
+<!--                  size="mini"-->
+<!--                  type="danger"-->
+<!--                  @click="headerDelete(scope.$index, scope.row)">删除-->
+<!--                </el-button>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--          </el-table>-->
+          <el-tabs v-model="activeName" @tab-click="tabClick">
+            <el-tab-pane label="Json" name="first">
+              <el-input
+                type="textarea"
+                :rows="5"
+                placeholder="请输入JSON格式数据"
+                v-model="reqjson">
+              </el-input>
+            </el-tab-pane>
+            <el-tab-pane label="Parameters" name="second">
+              <el-button type="primary" size="mini" @click="parameterAdd">添加参数</el-button>
+              <el-button type="primary" size="mini" @click="parameterDelete">删除参数</el-button>
+              <el-table
+                :data="tableParameter"
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="名称">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.key"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="值">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.value"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="Files Upload" name="third">
+              <el-button type="primary" size="mini" @click="fileAdd">添加文件</el-button>
+              <el-button type="primary" size="mini" @click="fileDelete">删除文件</el-button>
+              <el-table
+                :data="tableFile"
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="文件名称">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.key"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="参数名称">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.value"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="MIME类型">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.type"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
+          </el-tabs>
         </el-col>
-
         <el-dialog title="用例信息" :visible.sync="dialogFormVisible">
           <el-form :model="form">
             <el-form-item label="名称" label-width="120px">
@@ -173,8 +407,8 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="modifyUser()">确 定</el-button>
+            <el-button @click="dialogFormVisible = false" size="mini" >取 消</el-button>
+            <el-button type="primary" @click="modifyUser()" size="mini" >确 定</el-button>
           </div>
         </el-dialog>
 
@@ -184,7 +418,7 @@
               <el-input v-model="searchInfo.searchName" placeholder="用例名称"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary">查询</el-button>
+              <el-button type="primary" size="mini" >查询</el-button>
             </el-form-item>
           </el-form>
           <el-table
@@ -221,32 +455,41 @@
             </el-table-column>
           </el-table>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogCaseref = false">取 消</el-button>
-            <el-button type="primary" @click="modifyRef()">确 定</el-button>
+            <el-button @click="dialogCaseref = false" size="mini">取 消</el-button>
+            <el-button type="primary" size="mini" @click="modifyRef()">确 定</el-button>
           </div>
         </el-dialog>
 
-        <el-dialog title="请求头添加" :visible.sync="dialogHeader">
-          <el-form :inline="true" :model="headerInfo" ref="formInline">
-            <el-form-item label="名称：" prop="param1">
-              <el-input v-model="headerInfo.key" placeholder=""></el-input>
-            </el-form-item>
-            <el-form-item label="值：" prop="param1">
-              <el-input v-model="headerInfo.value" placeholder=""></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogHeader = false">取 消</el-button>
-            <el-button type="primary" @click="modifyHeader()">确 定</el-button>
-          </div>
-        </el-dialog>
+<!--        <el-dialog title="请求头添加" :visible.sync="dialogHeader">-->
+<!--          <el-form :inline="true" :model="headerInfo" ref="formInline">-->
+<!--            <el-form-item label="名称：" prop="param1">-->
+<!--              <el-input v-model="headerInfo.key" placeholder=""></el-input>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="值：" prop="param1">-->
+<!--              <el-input v-model="headerInfo.value" placeholder=""></el-input>-->
+<!--            </el-form-item>-->
+<!--          </el-form>-->
+<!--          <div slot="footer" class="dialog-footer">-->
+<!--            <el-button @click="dialogHeader = false" size="mini">取 消</el-button>-->
+<!--            <el-button type="primary" size="mini" @click="modifyHeader()">确 定</el-button>-->
+<!--          </div>-->
+<!--        </el-dialog>-->
       </el-row>
     </el-card>
   </div>
 </template>
 
 <script>
-import { requestIfcaselist, getIfcase, addIfcase, updateIfcase, delIfcase, getRefercase, delRefercase, addRefercase } from '@/api/ifcase'
+import {
+  requestIfcaselist,
+  getIfcase,
+  addIfcase,
+  updateIfcase,
+  delIfcase,
+  getRefercase,
+  delRefercase,
+  addRefercase
+} from '@/api/ifcase'
 import { requestInterface } from '@/api/interface'
 import { requestAllProject } from '@/api/project'
 import { requestSystemBySearch } from '@/api/system'
@@ -267,6 +510,16 @@ export default {
       tableData: [],
       tableCaseList: [],
       tableHeader: [],
+      tableExtract: [],
+      deleteIds: [],
+      extractOptions: [{
+        value: 'header',
+        label: '响应头'
+      }, {
+        value: 'content',
+        label: '响应体'
+      }],
+      tableAssert: [],
       currentCaseId: '',
       currentPage: 1,
       pageSize: 10,
@@ -286,17 +539,17 @@ export default {
         sys_name: '',
         index: 0
       },
-      headerInfo: {
-        key: '',
-        value: ''
-      },
+      // headerInfo: {
+      //   key: '',
+      //   value: ''
+      // },
       baseInfo: {
         id: '',
         case_name: '',
         url: '',
         base_url: ''
       },
-      tableCase: [],
+      tableCaseref: [],
       refForm: {
         id: '',
         mockid: '',
@@ -306,7 +559,11 @@ export default {
       },
       searchInfo: {
         searchName: ''
-      }
+      },
+      activeName: 'first',
+      reqjson: '',
+      tableParameter: [],
+      tableFile: []
     }
   },
   methods: {
@@ -329,23 +586,33 @@ export default {
       })
     },
     queryCaseList () {
-      requestIfcaselist({ }).then(res => {
+      requestIfcaselist({}).then(res => {
         this.tableCaseList = res.testcases
       })
     },
     openDetails (row) {
       getIfcase(row.id, {}).then(res => {
         this.baseInfo = res.testcases[0]
-        // this.baseInfo.case_url = res.testcases.url
-        console.log('------------currentCaseId', this.baseInfo.case_url)
+        this.tableHeader = this.baseInfo.request_head
+        this.tableAssert = this.baseInfo.check_json
+        this.tableExtract = this.baseInfo.ref_json
+        this.reqjson = this.baseInfo.request_json
+        for (let i in this.baseInfo.request_head) {
+          let o = {}
+          o[i].key = this.baseInfo.request_head[i].key
+          o[i].value = this.baseInfo.request_head[i].value
+          this.tableHeader.push(o)
+        }
+        console.log('------baseInfo------', this.baseInfo)
+        console.log('------this.tableHeader------', this.tableHeader)
       })
       this.getReflist(row.id)
     },
     getReflist (caseId) {
       getRefercase(caseId).then(res => {
-        this.tableCase = res.caserefers
-        this.currentCaseId = this.tableCase.mockid
-        console.log('------------', this.tableCase)
+        this.tableCaseref = res.caserefers
+        this.currentCaseId = this.tableCaseref.mockid
+        // console.log('------------', this.tableCaseref)
       })
     },
     handleQuery (formName) {
@@ -455,7 +722,7 @@ export default {
     },
     refAdd () {
       this.queryCaseList()
-      this.searchInfo.id = this.tableCase.mockid
+      this.searchInfo.id = this.tableCaseref.mockid
       this.searchInfo.searchName = ''
       this.dialogCaseref = true
     },
@@ -476,7 +743,7 @@ export default {
       this.getReflist(this.baseInfo.id)
     },
     refDelete (index, row) {
-      this.tableCase.splice(index, 1)
+      this.tableCaseref.splice(index, 1)
       delRefercase(row.id, {}).then(res => {
         this.$message({
           message: '删除' + row.refer_casename + '成功！',
@@ -484,43 +751,143 @@ export default {
         })
       })
     },
+    // headerAdd () {
+    //   this.headerInfo.dialogType = 'add'
+    //   this.headerInfo.key = ''
+    //   this.headerInfo.value = ''
+    //   this.dialogHeader = true
+    // },
+    // headerEdit (index, row) {
+    //   this.headerInfo.dialogType = 'edit'
+    //   this.headerInfo.index = index
+    //   this.headerInfo.key = row.key
+    //   this.headerInfo.value = row.value
+    //   this.dialogHeader = true
+    // },
+    // headerDelete (index, row) {
+    //   this.tableHeader.splice(index, 1)
+    //   this.$message({
+    //     message: '删除' + row.key + '成功！',
+    //     type: 'success'
+    //   })
+    // },
+    // modifyHeader () {
+    //   this.dialogHeader = false
+    //   if (this.headerInfo.dialogType === 'add') {
+    //     let param = { key: this.headerInfo.key, value: this.headerInfo.value }
+    //     this.tableHeader.push(param)
+    //     this.$message({
+    //       message: '新增' + this.headerInfo.key + '成功！',
+    //       type: 'success'
+    //     })
+    //   } else {
+    //     this.tableHeader[this.headerInfo.index].key = this.headerInfo.key
+    //     this.tableHeader[this.headerInfo.index].value = this.headerInfo.value
+    //     this.$message({
+    //       message: '修改' + this.headerInfo.key + '成功！',
+    //       type: 'success'
+    //     })
+    //   }
+    //   console.log('********tableHeader', this.tableHeader)
+    // },
     headerAdd () {
-      this.headerInfo.dialogType = 'add'
-      this.headerInfo.key = ''
-      this.headerInfo.value = ''
-      this.dialogHeader = true
-    },
-    headerEdit (index, row) {
-      this.headerInfo.dialogType = 'edit'
-      this.headerInfo.index = index
-      this.headerInfo.key = row.key
-      this.headerInfo.value = row.value
-      this.dialogHeader = true
-    },
-    headerDelete (index, row) {
-      this.tableHeader.splice(index, 1)
-      this.$message({
-        message: '删除' + row.key + '成功！',
-        type: 'success'
+      this.tableHeader.push({
+        key: null,
+        value: null
       })
     },
-    modifyHeader () {
-      this.dialogHeader = false
-      if (this.headerInfo.dialogType === 'add') {
-        this.tableHeader.splice(-1, 0, this.headerInfo)
-        this.$message({
-          message: '新增' + this.headerInfo.key + '成功！',
-          type: 'success'
+    headerDelete () {
+      if (this.multipleSelection) {
+        this.multipleSelection.forEach(element => {
+          if (element.id && this.deleteIds.indexOf(element.id) === -1) {
+            this.deleteIds.push(element.id)
+          }
+          this.tableHeader.splice(this.tableHeader.indexOf(element), 1)
+          this.$message({
+            message: '删除请求头成功！',
+            type: 'success'
+          })
+        })
+        console.log('@@@@this.tableHeader', this.tableHeader)
+      } else {
+        this.$message.error('请选择需删除的列！')
+      }
+    },
+    extractAdd () {
+      this.tableExtract.push({
+        // case_id: null,
+        // case_name: null,
+        extract_obj: null,
+        var_name: null,
+        var_express: null
+      })
+      console.log('----------this.tableExtract---', this.tableExtract)
+    },
+    extractDelete () {
+      if (this.multipleSelection) {
+        this.multipleSelection.forEach(element => {
+          if (element.id && this.deleteIds.indexOf(element.id) === -1) {
+            this.deleteIds.push(element.id)
+          }
+          this.tableExtract.splice(this.tableExtract.indexOf(element), 1)
+        })
+      }
+    },
+    assertAdd () {
+      this.tableAssert.push({
+        var_express: null,
+        var_expect: null
+      })
+      console.log('----------this.tableAssert---', this.tableAssert)
+    },
+    assertDelete () {
+      if (this.multipleSelection) {
+        this.multipleSelection.forEach(element => {
+          if (element.id && this.deleteIds.indexOf(element.id) === -1) {
+            this.deleteIds.push(element.id)
+          }
+          this.tableAssert.splice(this.tableAssert.indexOf(element), 1)
+        })
+      }
+    },
+    tabClick (tab, event) {
+      console.log(tab, event)
+    },
+    parameterAdd () {
+      this.tableParameter.push({
+        key: null,
+        value: null
+      })
+    },
+    parameterDelete () {
+      if (this.multipleSelection) {
+        this.multipleSelection.forEach(element => {
+          if (element.id && this.deleteIds.indexOf(element.id) === -1) {
+            this.deleteIds.push(element.id)
+          }
+          this.tableParameter.splice(this.tableParameter.indexOf(element), 1)
         })
       } else {
-        // this.tableHeader.splice(this.headerInfo.index, 1)
-        this.tableHeader.push(this.headerInfo)
-        this.tableHeader[this.headerInfo.index].key = this.headerInfo.key
-        this.tableHeader[this.headerInfo.index].value = this.headerInfo.value
-        this.$message({
-          message: '修改' + this.headerInfo.key + '成功！',
-          type: 'success'
+        this.$message.error('请选择需删除的列！')
+      }
+    },
+    fileAdd () {
+      this.tableFile.push({
+        key: null,
+        value: null,
+        type: null
+      })
+    },
+    fileDelete () {
+      if (this.multipleSelection) {
+        this.multipleSelection.forEach(element => {
+          if (element.id && this.deleteIds.indexOf(element.id) === -1) {
+            this.deleteIds.push(element.id)
+          }
+          this.tableFile.splice(this.tableFile.indexOf(element), 1)
         })
+      } else {
+        this.$message.error('请选择需删除的列！')
       }
     }
   },
