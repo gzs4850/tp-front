@@ -35,3 +35,7 @@ export const updateRefercase = (id, params) => {
 export const delRefercase = (id, params) => {
   return request('/api/testcases/refercase/' + id, params, { 'method': 'delete' })
 }
+
+export const runIfcase = (id, params) => {
+  return request('/api/testcases/run/' + id, params, { 'method': 'post' })
+}

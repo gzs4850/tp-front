@@ -9,7 +9,8 @@
                          @change="querySystemList($event, formInline.project_id)" placeholder="项目" style="width:30%">
                 <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
               </el-select>
-              <el-select v-model="formInline.sys_id" clearable size="small" @change="queryIfList($event, formInline.sys_id)"
+              <el-select v-model="formInline.sys_id" clearable size="small"
+                         @change="queryIfList($event, formInline.sys_id)"
                          placeholder="子系统" style="width:30%">
                 <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
               </el-select>
@@ -21,10 +22,10 @@
               <el-input v-model="formInline.if_name" size="small" placeholder="用例名称"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="mini" @click="handleQuery('formInline')">查询</el-button>
+              <el-button type="primary" size="mini" @click="caseQuery('formInline')">查询</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="mini" @click="handleAdd()">新增</el-button>
+              <el-button type="primary" size="mini" @click="caseAdd()">新增</el-button>
             </el-form-item>
           </el-form>
           <el-table
@@ -44,12 +45,12 @@
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  @click="handleEdit(scope.$index, scope.row)">编辑
+                  @click="caseEdit(scope.$index, scope.row)">编辑
                 </el-button>
                 <el-button
                   size="mini"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">删除
+                  @click="caseDelete(scope.$index, scope.row)">删除
                 </el-button>
               </template>
             </el-table-column>
@@ -77,13 +78,13 @@
               <el-input v-model="baseInfo.base_url" size="small" placeholder=""></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="mini">保存</el-button>
+              <el-button type="primary" size="mini" @click="save">保存</el-button>
             </el-form-item>
           </el-form>
 
-          <el-button type="primary" size="mini" @click="refAdd()">添加依赖</el-button>
-          <el-button type="primary" style="float:right" size="mini">结果查看</el-button>
-          <el-button type="primary" style="float:right" size="mini">调试</el-button>
+          <el-button type="primary" size="mini" @click="refAdd">添加依赖</el-button>
+          <el-button type="primary" style="float:right" size="mini" @click="queryResult">结果查看</el-button>
+          <el-button type="primary" style="float:right" size="mini" @click="run">调试</el-button>
           <el-table
             :data="tableCaseref"
             style="width: 100%">
@@ -113,6 +114,43 @@
             </el-table-column>
           </el-table>
           <el-tabs>
+            <el-tab-pane label="自定义变量">
+              <el-button type="primary" size="mini" @click="variableAdd">添加变量</el-button>
+              <el-button type="primary" size="mini" @click="variableDelete">删除变量</el-button>
+              <el-table
+                :data="tableVariable"
+                style="width: 100%"
+                @selection-change="handleSelectionChange">
+                <el-table-column
+                  type="selection"
+                  width="55">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="键">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.key"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="值">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="small"
+                      placeholder=""
+                      v-model="scope.row.value"
+                      clearable>
+                    </el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-tab-pane>
             <el-tab-pane label="请求头设置">
               <el-button type="primary" size="mini" @click="headerAdd">添加请求头</el-button>
               <el-button type="primary" size="mini" @click="headerDelete">删除请求头</el-button>
@@ -255,39 +293,11 @@
               </el-table>
             </el-tab-pane>
           </el-tabs>
-<!--          <el-button type="primary" size="mini" @click="headerAdd()">添加请求头</el-button>-->
-<!--          <el-table-->
-<!--            :data="tableHeader"-->
-<!--            style="width: 100%">-->
-<!--            <el-table-column label="字段">-->
-<!--              <template slot-scope="scope">-->
-<!--                <span style="margin-left: 5px">{{ scope.row.key }}</span>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--            <el-table-column label="值">-->
-<!--              <template slot-scope="scope">-->
-<!--                <span style="margin-left: 5px">{{ scope.row.value }}</span>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--            <el-table-column label="操作">-->
-<!--              <template slot-scope="scope">-->
-<!--                <el-button-->
-<!--                  size="mini"-->
-<!--                  @click="headerEdit(scope.$index, scope.row)">编辑-->
-<!--                </el-button>-->
-<!--                <el-button-->
-<!--                  size="mini"-->
-<!--                  type="danger"-->
-<!--                  @click="headerDelete(scope.$index, scope.row)">删除-->
-<!--                </el-button>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--          </el-table>-->
           <el-tabs v-model="activeName" @tab-click="tabClick">
             <el-tab-pane label="Json" name="first">
               <el-input
                 type="textarea"
-                :rows="5"
+                :rows="10"
                 placeholder="请输入JSON格式数据"
                 v-model="reqjson">
               </el-input>
@@ -405,10 +415,13 @@
             <el-form-item label="路径" label-width="120px">
               <el-input v-model="form.if_url" auto-complete="off"></el-input>
             </el-form-item>
+            <el-form-item label="方法" label-width="120px">
+              <el-input v-model="form.method" auto-complete="off"></el-input>
+            </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false" size="mini" >取 消</el-button>
-            <el-button type="primary" @click="modifyUser()" size="mini" >确 定</el-button>
+            <el-button @click="dialogFormVisible = false" size="mini">取 消</el-button>
+            <el-button type="primary" @click="modifyCase" size="mini">确 定</el-button>
           </div>
         </el-dialog>
 
@@ -418,7 +431,7 @@
               <el-input v-model="searchInfo.searchName" placeholder="用例名称"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="mini" >查询</el-button>
+              <el-button type="primary" size="mini">查询</el-button>
             </el-form-item>
           </el-form>
           <el-table
@@ -459,21 +472,6 @@
             <el-button type="primary" size="mini" @click="modifyRef()">确 定</el-button>
           </div>
         </el-dialog>
-
-<!--        <el-dialog title="请求头添加" :visible.sync="dialogHeader">-->
-<!--          <el-form :inline="true" :model="headerInfo" ref="formInline">-->
-<!--            <el-form-item label="名称：" prop="param1">-->
-<!--              <el-input v-model="headerInfo.key" placeholder=""></el-input>-->
-<!--            </el-form-item>-->
-<!--            <el-form-item label="值：" prop="param1">-->
-<!--              <el-input v-model="headerInfo.value" placeholder=""></el-input>-->
-<!--            </el-form-item>-->
-<!--          </el-form>-->
-<!--          <div slot="footer" class="dialog-footer">-->
-<!--            <el-button @click="dialogHeader = false" size="mini">取 消</el-button>-->
-<!--            <el-button type="primary" size="mini" @click="modifyHeader()">确 定</el-button>-->
-<!--          </div>-->
-<!--        </el-dialog>-->
       </el-row>
     </el-card>
   </div>
@@ -488,7 +486,8 @@ import {
   delIfcase,
   getRefercase,
   delRefercase,
-  addRefercase
+  addRefercase,
+  runIfcase
 } from '@/api/ifcase'
 import { requestInterface } from '@/api/interface'
 import { requestAllProject } from '@/api/project'
@@ -509,7 +508,11 @@ export default {
       caseList: [],
       tableData: [],
       tableCaseList: [],
-      tableHeader: [],
+      tableVariable: [],
+      tableHeader: [{
+        key: 'Content-Type',
+        value: 'application/json'
+      }],
       tableExtract: [],
       deleteIds: [],
       extractOptions: [{
@@ -530,6 +533,7 @@ export default {
       form: {
         id: '',
         case_name: '',
+        method: '',
         interface_id: '',
         if_name: '',
         if_url: '',
@@ -537,14 +541,16 @@ export default {
         pro_name: '',
         system_id: '',
         sys_name: '',
-        index: 0
+        index: 0,
+        var_json: {},
+        request_head: {},
+        extract_json: {},
+        check_json: {},
+        request_json: {}
       },
-      // headerInfo: {
-      //   key: '',
-      //   value: ''
-      // },
       baseInfo: {
         id: '',
+        method: '',
         case_name: '',
         url: '',
         base_url: ''
@@ -563,7 +569,17 @@ export default {
       activeName: 'first',
       reqjson: '',
       tableParameter: [],
-      tableFile: []
+      tableFile: [],
+      caseInfo: {
+        case_name: '',
+        if_url: '',
+        method: '',
+        var_json: {},
+        request_head: {},
+        extract_json: {},
+        check_json: {},
+        request_json: {}
+      }
     }
   },
   methods: {
@@ -593,21 +609,93 @@ export default {
     openDetails (row) {
       getIfcase(row.id, {}).then(res => {
         this.baseInfo = res.testcases[0]
+        this.tableVariable = []
         this.tableHeader = []
         this.tableAssert = []
         this.tableExtract = []
-        this.reqjson = ''
-        for (let [key, val] of Object.entries(this.baseInfo.request_head)) {
-          this.tableHeader.push({ key: key, value: val })
+        this.reqjson = JSON.stringify(this.baseInfo.request_json)
+        if (this.baseInfo.var_json) {
+          for (let [key, val] of Object.entries(this.baseInfo.var_json)) {
+            this.tableVariable.push({ key: key, value: val })
+          }
         }
-        for (let [key, val] of Object.entries(this.baseInfo.check_json)) {
-          console.log('key,val---------:', key, val)
-          let str = key.split('.', 2)
-          this.tableAssert.push({ var_obj: str[0], var_expect: val, var_express: str[1] })
-          console.log('tableAssert---------:', this.tableAssert)
+        if (this.baseInfo.request_head) {
+          for (let [key, val] of Object.entries(this.baseInfo.request_head)) {
+            this.tableHeader.push({ key: key, value: val })
+          }
+        }
+        if (this.baseInfo.extract_json) {
+          for (let [key, val] of Object.entries(this.baseInfo.extract_json)) {
+            let str1 = val.slice(0, val.indexOf('.'))
+            let str2 = val.slice(val.indexOf('.') + 1)
+            this.tableExtract.push({ var_name: key, extract_obj: str1, var_express: str2 })
+          }
+        }
+        if (this.baseInfo.check_json) {
+          for (let [key, val] of Object.entries(this.baseInfo.check_json)) {
+            let str1 = key.slice(0, key.indexOf('.'))
+            let str2 = key.slice(key.indexOf('.') + 1)
+            this.tableAssert.push({ var_obj: str1, var_expect: val, var_express: str2 })
+          }
         }
       })
       this.getReflist(row.id)
+    },
+    save () {
+      this.caseInfo.var_json = {}
+      this.caseInfo.request_head = {}
+      this.caseInfo.extract_json = {}
+      this.caseInfo.check_json = {}
+      this.caseInfo.case_name = this.baseInfo.case_name
+      this.caseInfo.if_url = this.baseInfo.url
+      this.caseInfo.method = this.baseInfo.method
+      if (this.tableVariable) {
+        for (let i in this.tableVariable) {
+          this.caseInfo.var_json[this.tableVariable[i].key] = this.tableVariable[i].value
+        }
+      }
+      if (this.tableHeader) {
+        for (let i in this.tableHeader) {
+          this.caseInfo.request_head[this.tableHeader[i].key] = this.tableHeader[i].value
+        }
+      }
+      if (this.tableExtract) {
+        for (let i in this.tableExtract) {
+          this.caseInfo.extract_json[this.tableExtract[i].var_name] = this.tableExtract[i].extract_obj + '.' + this.tableExtract[i].var_express
+        }
+      }
+      if (this.tableAssert) {
+        for (let i in this.tableAssert) {
+          // console.log('tableAssert:', this.tableAssert[i].var_obj, this.tableAssert[i].var_express, this.tableAssert[i].var_expect)
+          this.caseInfo.check_json[this.tableAssert[i].var_obj + '.' + this.tableAssert[i].var_express] = this.tableAssert[i].var_expect
+        }
+      }
+      if (this.reqjson) {
+        this.caseInfo.request_json = JSON.parse(this.reqjson)
+      } else {
+        if (this.tableParameter) {
+          for (let i in this.tableParameter) {
+            // console.log('i:', this.tableParameter[i].key, this.tableParameter[i].value)
+            this.caseInfo.request_json[this.tableParameter[i].key] = this.tableParameter[i].value
+          }
+        }
+      }
+      updateIfcase(this.baseInfo.id, this.caseInfo).then(res => {
+        this.$message({
+          message: '保存成功！',
+          type: 'success'
+        })
+      })
+    },
+    run () {
+      runIfcase(this.baseInfo.id, {}).then(res => {
+        this.$message({
+          message: '运行成功！',
+          type: 'success'
+        })
+      })
+    },
+    queryResult () {
     },
     getReflist (caseId) {
       getRefercase(caseId).then(res => {
@@ -616,7 +704,7 @@ export default {
         // console.log('------------', this.tableCaseref)
       })
     },
-    handleQuery (formName) {
+    caseQuery (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           requestIfcaselist(this.formInline).then(res => {
@@ -633,20 +721,22 @@ export default {
         }
       })
     },
-    handleAdd () {
+    caseAdd () {
       this.form.dialogType = 'add'
       this.form.index = ''
       this.form.case_name = ''
+      this.form.method = ''
       this.form.interface_id = ''
       this.form.if_url = ''
       this.form.project_id = ''
       this.form.system_id = ''
       this.dialogFormVisible = true
     },
-    handleEdit (index, row) {
+    caseEdit (index, row) {
       this.form.dialogType = 'edit'
       this.form.index = index + (this.currentPage - 1) * this.pageSize
       this.form.id = row.id
+      this.form.method = row.method
       this.form.case_name = row.case_name
       this.form.interface_id = row.interface_id
       this.form.if_name = row.if_name
@@ -657,7 +747,7 @@ export default {
       this.form.sys_name = row.sys_name
       this.dialogFormVisible = true
     },
-    handleDelete (index, row) {
+    caseDelete (index, row) {
       this.tableData.splice(index + (this.currentPage - 1) * this.pageSize, 1)
       this.pageTotal = this.tableData.length
       delIfcase(row.id, {}).then(res => {
@@ -673,8 +763,9 @@ export default {
     handleCurrentChange (currentPage) {
       this.currentPage = currentPage
     },
-    modifyUser () {
+    modifyCase () {
       this.dialogFormVisible = false
+      console.log('********form***********', this.form)
       if (this.form.dialogType === 'add') {
         addIfcase(this.form).then(res => {
           this.$message({
@@ -720,6 +811,7 @@ export default {
       })
       this.form.if_url = obj.if_url
       this.form.if_name = obj.if_name
+      this.form.method = obj.if_method
     },
     refAdd () {
       this.queryCaseList()
@@ -752,45 +844,28 @@ export default {
         })
       })
     },
-    // headerAdd () {
-    //   this.headerInfo.dialogType = 'add'
-    //   this.headerInfo.key = ''
-    //   this.headerInfo.value = ''
-    //   this.dialogHeader = true
-    // },
-    // headerEdit (index, row) {
-    //   this.headerInfo.dialogType = 'edit'
-    //   this.headerInfo.index = index
-    //   this.headerInfo.key = row.key
-    //   this.headerInfo.value = row.value
-    //   this.dialogHeader = true
-    // },
-    // headerDelete (index, row) {
-    //   this.tableHeader.splice(index, 1)
-    //   this.$message({
-    //     message: '删除' + row.key + '成功！',
-    //     type: 'success'
-    //   })
-    // },
-    // modifyHeader () {
-    //   this.dialogHeader = false
-    //   if (this.headerInfo.dialogType === 'add') {
-    //     let param = { key: this.headerInfo.key, value: this.headerInfo.value }
-    //     this.tableHeader.push(param)
-    //     this.$message({
-    //       message: '新增' + this.headerInfo.key + '成功！',
-    //       type: 'success'
-    //     })
-    //   } else {
-    //     this.tableHeader[this.headerInfo.index].key = this.headerInfo.key
-    //     this.tableHeader[this.headerInfo.index].value = this.headerInfo.value
-    //     this.$message({
-    //       message: '修改' + this.headerInfo.key + '成功！',
-    //       type: 'success'
-    //     })
-    //   }
-    //   console.log('********tableHeader', this.tableHeader)
-    // },
+    variableAdd () {
+      this.tableVariable.push({
+        key: null,
+        value: null
+      })
+    },
+    variableDelete () {
+      if (this.multipleSelection) {
+        this.multipleSelection.forEach(element => {
+          if (element.id && this.deleteIds.indexOf(element.id) === -1) {
+            this.deleteIds.push(element.id)
+          }
+          this.tableVariable.splice(this.tableVariable.indexOf(element), 1)
+          this.$message({
+            message: '删除请求头成功！',
+            type: 'success'
+          })
+        })
+      } else {
+        this.$message.error('请选择需删除的列！')
+      }
+    },
     headerAdd () {
       this.tableHeader.push({
         key: null,
@@ -809,20 +884,16 @@ export default {
             type: 'success'
           })
         })
-        console.log('@@@@this.tableHeader', this.tableHeader)
       } else {
         this.$message.error('请选择需删除的列！')
       }
     },
     extractAdd () {
       this.tableExtract.push({
-        // case_id: null,
-        // case_name: null,
         extract_obj: null,
         var_name: null,
         var_express: null
       })
-      console.log('----------this.tableExtract---', this.tableExtract)
     },
     extractDelete () {
       if (this.multipleSelection) {
@@ -840,7 +911,6 @@ export default {
         var_express: null,
         var_expect: null
       })
-      console.log('----------this.tableAssert---', this.tableAssert)
     },
     assertDelete () {
       if (this.multipleSelection) {
@@ -894,7 +964,7 @@ export default {
     }
   },
   mounted: function () {
-    this.handleQuery('formInline')
+    this.caseQuery('formInline')
     this.queryProjectList()
   }
 }
