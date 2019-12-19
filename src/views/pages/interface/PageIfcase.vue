@@ -472,6 +472,44 @@
             <el-button type="primary" size="mini" @click="modifyRef()">确 定</el-button>
           </div>
         </el-dialog>
+
+        <el-dialog title="调试结果" :visible.sync="dialogResultVisible">
+          <el-form :model="resForm">
+            <el-form-item label="名称" label-width="120px">
+              <el-input v-model="resForm.case_name" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="测试结果" label-width="120px">
+              <el-input v-model="resForm.test_result" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="测试时间" label-width="120px">
+              <el-input v-model="resForm.timestamp" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="耗时" label-width="120px">
+              <el-input v-model="resForm.real_rsp_time" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="响应码" label-width="120px">
+              <el-input v-model="resForm.real_rsp_code" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="请求头" label-width="120px">
+              <el-input v-model="resForm.real_req_head" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="请求体" label-width="120px">
+              <el-input v-model="resForm.real_req_json" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="响应头" label-width="120px">
+              <el-input v-model="resForm.real_rsp_head" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="响应体" label-width="120px">
+              <el-input v-model="resForm.real_rsp_json" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="断言结果" label-width="120px">
+              <el-input v-model="resForm.assert_msg" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogResultVisible = false" size="mini">关 闭</el-button>
+          </div>
+        </el-dialog>
       </el-row>
     </el-card>
   </div>
@@ -489,6 +527,7 @@ import {
   addRefercase,
   runIfcase
 } from '@/api/ifcase'
+import { getResult } from '@/api/testresult'
 import { requestInterface } from '@/api/interface'
 import { requestAllProject } from '@/api/project'
 import { requestSystemBySearch } from '@/api/system'
@@ -530,6 +569,7 @@ export default {
       dialogFormVisible: false,
       dialogCaseref: false,
       dialogHeader: false,
+      dialogResultVisible: false,
       form: {
         id: '',
         case_name: '',
@@ -579,6 +619,18 @@ export default {
         extract_json: {},
         check_json: {},
         request_json: {}
+      },
+      resForm: {
+        case_name: '',
+        test_result: '',
+        timestamp: '',
+        real_rsp_time: '',
+        real_rsp_code: '',
+        real_req_head: '',
+        real_req_json: '',
+        real_rsp_head: '',
+        real_rsp_json: '',
+        assert_msg: ''
       }
     }
   },
@@ -696,6 +748,10 @@ export default {
       })
     },
     queryResult () {
+      getResult(this.baseInfo.id, {}).then(res => {
+        this.resForm = res.testresult
+      })
+      this.dialogResultVisible = true
     },
     getReflist (caseId) {
       getRefercase(caseId).then(res => {
