@@ -1,31 +1,6 @@
 <template>
   <div style="width: 100%;">
     <el-card>
-      1. 实现：请参考
-      <a style="color: #409eff" href="http://element-cn.eleme.io/#/zh-CN/component/table">Element Table</a><br/>
-      2. 示例：以下示例源代码见
-      <a href="https://github.com/linjinze999/vue-llplatform/blob/vue-cli3/llplatform/src/views/pages/PageTable.vue"
-         style="color: #409eff" target="_blank">
-        https://github.com/linjinze999/vue-llplatform/blob/vue-cli3/llplatform/src/views/pages/PageTable.vue
-      </a>
-    </el-card>
-    <el-card style="margin-top: 20px;">
-      <el-form :inline="true" :model="formInline" ref="formInline" :rules="rules">
-        <el-form-item label="名字：" prop="param1">
-          <el-input v-model="formInline.param1" placeholder="条件1"></el-input>
-        </el-form-item>
-        <el-form-item label="地址：" prop="param2">
-          <el-select v-model="formInline.param2" placeholder="条件2">
-            <el-option label="选项1" value="item1"></el-option>
-            <el-option label="选项2" value="item2"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit('formInline')">查询</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-    <el-card style="margin-top: 20px;">
       <el-table
         :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         style="width: 100%">
@@ -94,13 +69,9 @@
 <script>
 import { requestUserQuery } from '@/api/user'
 export default {
-  name: 'PageTable',
+  name: 'PageEnv',
   data () {
     return {
-      formInline: {
-        param1: '条件1',
-        param2: '选项1'
-      },
       tableData: [
         { name: 'jim', data: '2019-08-01 12:00:00', address: '湖南省长沙市' },
         { name: 'allen', data: '2019-08-01 12:00:00', address: '湖南省岳阳市' },

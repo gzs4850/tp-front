@@ -24,16 +24,10 @@ const staticRouter = [
         icon: 'el-icon-s-home',
         component: () => import('@/views/pages/PageHome')
       }, {
-        path: '/table',
-        name: 'table',
-        title: '表格',
-        icon: 'el-icon-s-home',
-        component: () => import('@/views/pages/PageTable')
-      }, {
         path: '/interface',
         name: 'interface',
         title: '接口测试',
-        icon: 'el-icon-setting',
+        icon: 'el-icon-cpu',
         component: () => import('@/views/layout/TheLayoutEmpty'),
         children: [
           {
@@ -50,30 +44,10 @@ const staticRouter = [
           }
         ]
       }, {
-        path: '/setting',
-        name: 'setting',
-        title: '系统设置',
-        icon: 'el-icon-setting',
-        component: () => import('@/views/layout/TheLayoutEmpty'),
-        children: [
-          {
-            path: '/setting/project',
-            name: 'project',
-            title: '项目管理',
-            component: () => import('@/views/pages/setting/PageProject')
-          },
-          {
-            path: '/setting/system',
-            name: 'system',
-            title: '子系统管理',
-            component: () => import('@/views/pages/setting/PageSystem')
-          }
-        ]
-      }, {
         path: '/level1',
         name: 'level1',
-        title: '一级目录',
-        icon: 'el-icon-s-operation',
+        title: 'WEB测试',
+        icon: 'el-icon-eleme',
         component: () => import('@/views/layout/TheLayoutEmpty'),
         children: [
           {
@@ -109,16 +83,75 @@ const staticRouter = [
           }
         ]
       }, {
+        path: '/setting',
+        name: 'setting',
+        title: '系统设置',
+        icon: 'el-icon-setting',
+        component: () => import('@/views/layout/TheLayoutEmpty'),
+        children: [
+          {
+            path: '/setting/project',
+            name: 'project',
+            title: '项目管理',
+            component: () => import('@/views/pages/setting/PageProject')
+          },
+          {
+            path: '/setting/system',
+            name: 'system',
+            title: '子系统管理',
+            component: () => import('@/views/pages/setting/PageSystem')
+          },
+          {
+            path: '/setting/eve',
+            name: 'env',
+            title: '环境配置',
+            component: () => import('@/views/pages/setting/PageEnv')
+          }
+        ]
+      }, {
+        path: '/schedule',
+        name: 'Schedule',
+        title: '定时任务',
+        icon: 'el-icon-alarm-clock',
+        component: () => import('@/views/layout/TheLayoutEmpty'),
+        children: [
+          {
+            path: '/user/password',
+            name: 'userPassword',
+            title: '定时任务',
+            component: () => import('@/views/pages/user/PageUserPassword')
+          }
+        ]
+      }, {
         path: '/user',
         name: 'user',
         title: '个人设置',
-        icon: 'el-icon-setting',
+        icon: 'el-icon-s-custom',
         component: () => import('@/views/layout/TheLayoutEmpty'),
         children: [
           {
             path: '/user/password',
             name: 'userPassword',
             title: '修改密码',
+            component: () => import('@/views/pages/user/PageUserPassword')
+          }
+        ]
+      }, {
+        path: '/factory',
+        name: 'factory',
+        title: '资源管理',
+        icon: 'el-icon-files',
+        component: () => import('@/views/layout/TheLayoutEmpty'),
+        children: [
+          {
+            path: '/user/password',
+            name: 'userPassword',
+            title: '数据工厂',
+            component: () => import('@/views/pages/user/PageUserPassword')
+          }, {
+            path: '/user/password',
+            name: 'userPassword',
+            title: '文件上传',
             component: () => import('@/views/pages/user/PageUserPassword')
           }
         ]

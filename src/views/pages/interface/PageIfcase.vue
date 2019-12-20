@@ -475,35 +475,35 @@
 
         <el-dialog title="调试结果" :visible.sync="dialogResultVisible">
           <el-form :model="resForm">
-            <el-form-item label="名称" label-width="120px">
-              <el-input v-model="resForm.case_name" auto-complete="off"></el-input>
+            <el-form-item label="名称:" label-width="120px">
+              <span>{{resForm.case_name}}</span>
             </el-form-item>
-            <el-form-item label="测试结果" label-width="120px">
-              <el-input v-model="resForm.test_result" auto-complete="off"></el-input>
+            <el-form-item label="测试结果:" label-width="120px">
+              <span>{{resForm.test_result}}</span>
             </el-form-item>
-            <el-form-item label="测试时间" label-width="120px">
-              <el-input v-model="resForm.timestamp" auto-complete="off"></el-input>
+            <el-form-item label="测试时间:" label-width="120px">
+              <span>{{resForm.timestamp}}</span>
             </el-form-item>
-            <el-form-item label="耗时" label-width="120px">
-              <el-input v-model="resForm.real_rsp_time" auto-complete="off"></el-input>
+            <el-form-item label="耗时:" label-width="120px">
+              <span>{{resForm.real_rsp_time}}</span>
             </el-form-item>
-            <el-form-item label="响应码" label-width="120px">
-              <el-input v-model="resForm.real_rsp_code" auto-complete="off"></el-input>
+            <el-form-item label="响应码:" label-width="120px">
+              <span>{{resForm.real_rsp_code}}</span>
             </el-form-item>
-            <el-form-item label="请求头" label-width="120px">
-              <el-input v-model="resForm.real_req_head" auto-complete="off"></el-input>
+            <el-form-item label="请求头:" label-width="120px">
+              <span>{{resForm.real_req_head}}</span>
             </el-form-item>
-            <el-form-item label="请求体" label-width="120px">
-              <el-input v-model="resForm.real_req_json" auto-complete="off"></el-input>
+            <el-form-item label="请求体:" label-width="120px">
+              <span>{{resForm.real_req_json}}</span>
             </el-form-item>
-            <el-form-item label="响应头" label-width="120px">
-              <el-input v-model="resForm.real_rsp_head" auto-complete="off"></el-input>
+            <el-form-item label="响应头:" label-width="120px">
+              <span>{{resForm.real_rsp_head}}</span>
             </el-form-item>
-            <el-form-item label="响应体" label-width="120px">
-              <el-input v-model="resForm.real_rsp_json" auto-complete="off"></el-input>
+            <el-form-item label="响应体:" label-width="120px">
+              <span>{{resForm.real_rsp_json}}</span>
             </el-form-item>
-            <el-form-item label="断言结果" label-width="120px">
-              <el-input v-model="resForm.assert_msg" auto-complete="off"></el-input>
+            <el-form-item label="断言结果:" label-width="120px">
+              <span>{{resForm.assert_msg}}</span>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -750,6 +750,7 @@ export default {
     queryResult () {
       getResult(this.baseInfo.id, {}).then(res => {
         this.resForm = res.testresult
+        this.resForm.case_name = this.baseInfo.case_name
       })
       this.dialogResultVisible = true
     },
