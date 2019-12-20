@@ -7,8 +7,8 @@
             <i class="el-icon-set-up" style="color: #F56C6C;"></i>
           </div>
           <div class="m-content">
-            <p>待办事项</p>
-            <p class="m-count">{{ info.tasks }}</p>
+            <p>项目数</p>
+            <p class="m-count">{{ projectTotal }}</p>
           </div>
         </el-card>
       </el-col>
@@ -18,8 +18,8 @@
             <i class="el-icon-message" style="color: #E6A23C;"></i>
           </div>
           <div class="m-content">
-            <p>系统消息</p>
-            <p class="m-count">{{ info.message }}</p>
+            <p>子系统数</p>
+            <p class="m-count">{{ systemTotal }}</p>
           </div>
         </el-card>
       </el-col>
@@ -29,19 +29,19 @@
             <i class="el-icon-document" style="color: #67C23A;"></i>
           </div>
           <div class="m-content">
-            <p>代码量</p>
-            <p class="m-count">{{ info.code }}</p>
+            <p>接口数</p>
+            <p class="m-count">{{ interfaceTotal }}</p>
           </div>
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="12" :lg="6">
         <el-card class="m-box-card" shadow="hover">
           <div class="m-icon">
-            <i class="el-icon-sunrise-1" style="color: #409EFF;"></i>
+            <i class="el-icon-document" style="color: #67C23A;"></i>
           </div>
           <div class="m-content">
-            <p>天气</p>
-            <p>{{ info.weather }}</p>
+            <p>接口用例数</p>
+            <p class="m-count">{{ ifcaseTotal }}</p>
           </div>
         </el-card>
       </el-col>
@@ -75,7 +75,8 @@
           </el-col>
           <el-col :sm="12" :lg="24">
             <el-card class="m-box-card" shadow="hover">
-              <div style="height: 215px; margin: -20px;background-color: rgb(247, 151, 214);color:#ffffff;overflow: auto">
+              <div
+                style="height: 215px; margin: -20px;background-color: rgb(247, 151, 214);color:#ffffff;overflow: auto">
                 <div style="padding: 20px;">
                   <p style="font-weight: bold;text-align: center">重要通知</p>
                   <p v-for="index in 20" :key="index">{{index}}. 帅哥/美女出没，请注意！</p>
@@ -146,8 +147,13 @@
 </template>
 
 <script>
+import { requestAllProject } from '@/api/project'
+import { requestAllSystem } from '@/api/system'
+import { requestInterface } from '@/api/interface'
+import { requestIfcaselist } from '@/api/ifcase'
 import VeLine from 'v-charts/lib/line.common'
 import VeScatter from 'v-charts/lib/scatter.common'
+
 export default {
   name: 'PageHome',
   components: {
@@ -156,6 +162,10 @@ export default {
   },
   data () {
     return {
+      projectTotal: '',
+      systemTotal: '',
+      interfaceTotal: '',
+      ifcaseTotal: '',
       info: {
         tasks: parseFloat(12).toLocaleString(),
         message: parseFloat(6).toLocaleString(),
@@ -238,6 +248,30 @@ export default {
     }
   },
   methods: {
+    queryProjects () {
+      requestAllProject().then(res => {
+        this.projectTotal = res.projects.length
+        this.tableProject = res.projects
+      })
+    },
+    querySystems () {
+      requestAllSystem().then(res => {
+        this.systemTotal = res.systems.length
+        this.tableSystem = res.systems
+      })
+    },
+    queryInterfaces () {
+      requestInterface().then(res => {
+        this.interfaceTotal = res.interfaces.length
+        this.tableInterface = res.interfaces
+      })
+    },
+    queryIfcases () {
+      requestIfcaselist().then(res => {
+        this.ifcaseTotal = res.testcases.length
+        this.tableIfcase = res.testcases
+      })
+    },
     tableRowClassName ({ row, rowIndex }) {
       if (rowIndex === 1) {
         return 'warning-row'
@@ -246,46 +280,60 @@ export default {
       }
       return ''
     }
+  },
+  mounted () {
+    this.queryProjects()
+    this.querySystems()
+    this.queryInterfaces()
+    this.queryIfcases()
   }
 }
 </script>
 
 <style scoped lang="scss">
-  .m-home {
-    .m-box-card {
-      margin-bottom: 10px;
-      color: #666666;
-      .m-icon {
-        float: left;
-        width: 60px;
-        i {
-          font-size: 40px;
-        }
-      }
-      .m-content {
-        margin-left: 60px;
-        .m-count {
-          font-size: 20px;
-        }
+.m-home {
+  .m-box-card {
+    margin-bottom: 10px;
+    color: #666666;
+
+    .m-icon {
+      float: left;
+      width: 60px;
+
+      i {
+        font-size: 40px;
       }
     }
-    .m-task-box {
-      margin-bottom: 20px;
-      .m-task-text {
-        float: left;
-        line-height: 16px;
-      }
-      .m-task-pro {
-        margin-left: 60px;
+
+    .m-content {
+      margin-left: 60px;
+
+      .m-count {
+        font-size: 20px;
       }
     }
   }
+
+  .m-task-box {
+    margin-bottom: 20px;
+
+    .m-task-text {
+      float: left;
+      line-height: 16px;
+    }
+
+    .m-task-pro {
+      margin-left: 60px;
+    }
+  }
+}
 </style>
 <style>
-  .el-table .warning-row {
-    background: oldlace;
-  }
-  .el-table .success-row {
-    background: #f0f9eb;
-  }
+.el-table .warning-row {
+  background: oldlace;
+}
+
+.el-table .success-row {
+  background: #f0f9eb;
+}
 </style>
