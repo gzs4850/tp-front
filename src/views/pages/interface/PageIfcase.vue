@@ -2,36 +2,58 @@
   <div style="width: 100%;">
     <el-card style="margin-top: 20px;">
       <el-row :gutter="20">
-        <el-col :span="10">
+        <el-col :span="8">
           <el-form :inline="true" :model="formInline" ref="formInline">
-            <el-form-item>
-              <el-select v-model="formInline.project_id" clearable size="small"
-                         @change="querySystemList($event, formInline.project_id)" placeholder="项目" style="width:30%">
-                <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
-              </el-select>
-              <el-select v-model="formInline.sys_id" clearable size="small"
-                         @change="queryIfList($event, formInline.sys_id)"
-                         placeholder="子系统" style="width:30%">
-                <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
-              </el-select>
-              <el-select v-model="formInline.if_id" clearable size="small" placeholder="接口" style="width:40%">
-                <el-option v-for="item in ifList" :key="item.id" :label="item.if_name" :value="item.id"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item style="width:60%">
-              <el-input v-model="formInline.if_name" size="small" placeholder="用例名称"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="mini" @click="caseQuery('formInline')">查询</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="mini" @click="caseAdd()">新增</el-button>
-            </el-form-item>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item>
+                  <el-select v-model="formInline.project_id" clearable size="small"
+                             @change="querySystemList($event, formInline.project_id)" placeholder="项目">
+                    <el-option v-for="item in proList" :key="item.id" :label="item.pro_name"
+                               :value="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item>
+                  <el-select v-model="formInline.sys_id" clearable size="small"
+                             @change="queryIfList($event, formInline.sys_id)"
+                             placeholder="子系统">
+                    <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name"
+                               :value="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item>
+                  <el-select v-model="formInline.if_id" clearable size="small" placeholder="接口">
+                    <el-option v-for="item in ifList" :key="item.id" :label="item.if_name" :value="item.id"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="8">
+                <el-form-item>
+                  <el-input v-model="formInline.if_name" size="small" placeholder="用例名称"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+              </el-col>
+              <el-col :span="8">
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="caseQuery('formInline')">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="caseAdd">新增</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
           <el-table
             :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-            @row-click="openDetails" style="width: 100%">
-            <el-table-column label="ID">
+            @row-click="openDetails" stripe style="width: 100%">
+            <el-table-column label="ID" width="50">
               <template slot-scope="scope">
                 <span style="margin-left: 5px">{{ scope.row.id }}</span>
               </template>
@@ -66,25 +88,43 @@
             :total="pageTotal">
           </el-pagination>
         </el-col>
-        <el-col :span="14">
-          <el-form :inline="true" :model="baseInfo" ref="formInline">
-            <el-form-item label="名称" prop="case_name">
-              <el-input v-model="baseInfo.case_name" size="small" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="URL" prop="case_url">
-              <el-input v-model="baseInfo.url" size="small" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="调试后台" prop="base_url">
-              <el-input v-model="baseInfo.base_url" size="small" placeholder=""></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="mini" @click="save">保存</el-button>
-            </el-form-item>
+        <el-col :span="16">
+          <el-form :inline="true" :model="baseInfo" ref="formInline" :disabled="able">
+            <el-row>
+              <el-col :span="6">
+                <el-form-item label="名称" prop="case_name">
+                  <el-input v-model="baseInfo.case_name" size="small" auto-complete="off"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="URL" prop="case_url">
+                  <el-input v-model="baseInfo.url" size="small" auto-complete="off"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="7">
+                <el-form-item label="环境" prop="base_url">
+                  <el-select v-model="baseInfo.base_url" size="small" placeholder="">
+                    <el-option v-for="item in envOptions" :key="item.value" :label="item.label"
+                               :value="item.value"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="5">
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="save">保存</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="run">调试</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="queryResult">看结果</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
 
-          <el-button type="primary" size="mini" @click="refAdd">添加依赖</el-button>
-          <el-button type="primary" style="float:right" size="mini" @click="queryResult">结果查看</el-button>
-          <el-button type="primary" style="float:right" size="mini" @click="run">调试</el-button>
+          <el-button type="primary" size="mini" @click="refAdd" :disabled="able">添加依赖</el-button>
+
           <el-table
             :data="tableCaseref"
             style="width: 100%">
@@ -114,9 +154,9 @@
             </el-table-column>
           </el-table>
           <el-tabs>
-            <el-tab-pane label="自定义变量">
-              <el-button type="primary" size="mini" @click="variableAdd">添加变量</el-button>
-              <el-button type="primary" size="mini" @click="variableDelete">删除变量</el-button>
+            <el-tab-pane label="自定义变量" :disabled="able">
+              <el-button type="primary" size="mini" @click="variableAdd" :disabled="able">添加变量</el-button>
+              <el-button type="primary" size="mini" @click="variableDelete" :disabled="able">删除变量</el-button>
               <el-table
                 :data="tableVariable"
                 style="width: 100%"
@@ -151,7 +191,7 @@
                 </el-table-column>
               </el-table>
             </el-tab-pane>
-            <el-tab-pane label="请求头设置">
+            <el-tab-pane label="请求头设置" :disabled="able">
               <el-button type="primary" size="mini" @click="headerAdd">添加请求头</el-button>
               <el-button type="primary" size="mini" @click="headerDelete">删除请求头</el-button>
               <el-table
@@ -188,7 +228,7 @@
                 </el-table-column>
               </el-table>
             </el-tab-pane>
-            <el-tab-pane label="字段提取">
+            <el-tab-pane label="字段提取" :disabled="able">
               <el-button type="primary" size="mini" @click="extractAdd">提取字段</el-button>
               <el-button type="primary" size="mini" @click="extractDelete">删除提取</el-button>
               <el-table
@@ -253,7 +293,7 @@
                 </el-table-column>
               </el-table>
             </el-tab-pane>
-            <el-tab-pane label="断言设置">
+            <el-tab-pane label="断言设置" :disabled="able">
               <el-button type="primary" size="mini" @click="assertAdd">添加断言</el-button>
               <el-button type="primary" size="mini" @click="assertDelete">删除断言</el-button>
               <el-table
@@ -294,7 +334,7 @@
             </el-tab-pane>
           </el-tabs>
           <el-tabs v-model="activeName" @tab-click="tabClick">
-            <el-tab-pane label="Json" name="first">
+            <el-tab-pane label="Json" name="first" :disabled="able">
               <el-input
                 type="textarea"
                 :rows="10"
@@ -302,7 +342,7 @@
                 v-model="reqjson">
               </el-input>
             </el-tab-pane>
-            <el-tab-pane label="Parameters" name="second">
+            <el-tab-pane label="Parameters" name="second" :disabled="able">
               <el-button type="primary" size="mini" @click="parameterAdd">添加参数</el-button>
               <el-button type="primary" size="mini" @click="parameterDelete">删除参数</el-button>
               <el-table
@@ -339,7 +379,7 @@
                 </el-table-column>
               </el-table>
             </el-tab-pane>
-            <el-tab-pane label="Files Upload" name="third">
+            <el-tab-pane label="Files Upload" name="third" :disabled="able">
               <el-button type="primary" size="mini" @click="fileAdd">添加文件</el-button>
               <el-button type="primary" size="mini" @click="fileDelete">删除文件</el-button>
               <el-table
@@ -475,7 +515,7 @@
 
         <el-dialog title="调试结果" :visible.sync="dialogResultVisible">
           <el-form :model="resForm">
-            <el-form-item label="名称:" label-width="120px">
+            <el-form-item label="用例名称:" label-width="120px">
               <span>{{resForm.case_name}}</span>
             </el-form-item>
             <el-form-item label="测试结果:" label-width="120px">
@@ -489,6 +529,9 @@
             </el-form-item>
             <el-form-item label="响应码:" label-width="120px">
               <span>{{resForm.real_rsp_code}}</span>
+            </el-form-item>
+            <el-form-item label="请求地址:" label-width="120px">
+              <span>{{resForm.real_req_path}}</span>
             </el-form-item>
             <el-form-item label="请求头:" label-width="120px">
               <span>{{resForm.real_req_head}}</span>
@@ -561,6 +604,13 @@ export default {
         value: 'content',
         label: '响应体'
       }],
+      envOptions: [{
+        value: 'uat',
+        label: '测试环境'
+      }, {
+        value: 'dev',
+        label: '开发环境'
+      }],
       tableAssert: [],
       currentCaseId: '',
       currentPage: 1,
@@ -626,12 +676,14 @@ export default {
         timestamp: '',
         real_rsp_time: '',
         real_rsp_code: '',
+        real_req_path: '',
         real_req_head: '',
         real_req_json: '',
         real_rsp_head: '',
         real_rsp_json: '',
         assert_msg: ''
-      }
+      },
+      able: true
     }
   },
   methods: {
@@ -661,6 +713,7 @@ export default {
     openDetails (row) {
       getIfcase(row.id, {}).then(res => {
         this.baseInfo = res.testcases[0]
+        console.log('this.baseInfo-----', this.baseInfo)
         this.tableVariable = []
         this.tableHeader = []
         this.tableAssert = []
@@ -685,6 +738,7 @@ export default {
         }
         if (this.baseInfo.check_json) {
           for (let [key, val] of Object.entries(this.baseInfo.check_json)) {
+            // console.log('key,val', key, val)
             let str1 = key.slice(0, key.indexOf('.'))
             let str2 = key.slice(key.indexOf('.') + 1)
             this.tableAssert.push({ var_obj: str1, var_expect: val, var_express: str2 })
@@ -692,6 +746,15 @@ export default {
         }
       })
       this.getReflist(row.id)
+      this.toDisable()
+    },
+    toDisable () {
+      console.log('this.baseInfo.id----', this.baseInfo.id)
+      if (this.baseInfo) {
+        this.able = false
+      } else {
+        this.able = true
+      }
     },
     save () {
       this.caseInfo.var_json = {}
@@ -718,7 +781,11 @@ export default {
       }
       if (this.tableAssert) {
         for (let i in this.tableAssert) {
-          // console.log('tableAssert:', this.tableAssert[i].var_obj, this.tableAssert[i].var_express, this.tableAssert[i].var_expect)
+          for (let j in this.tableExtract) {
+            if (this.tableExtract[j].var_express === this.tableAssert[i].var_express) {
+              this.tableAssert[i].var_obj = this.tableExtract[j].extract_obj
+            }
+          }
           this.caseInfo.check_json[this.tableAssert[i].var_obj + '.' + this.tableAssert[i].var_express] = this.tableAssert[i].var_expect
         }
       }
@@ -740,12 +807,16 @@ export default {
       })
     },
     run () {
-      runIfcase(this.baseInfo.id, {}).then(res => {
-        this.$message({
-          message: '运行成功！',
-          type: 'success'
+      if (this.baseInfo.base_url) {
+        runIfcase(this.baseInfo.id, { 'env': this.baseInfo.base_url }).then(res => {
+          this.$message({
+            message: '运行成功！',
+            type: 'success'
+          })
         })
-      })
+      } else {
+        this.$message.error('请选择调试环境！')
+      }
     },
     queryResult () {
       getResult(this.baseInfo.id, {}).then(res => {
@@ -765,10 +836,6 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           requestIfcaselist(this.formInline).then(res => {
-            this.$message({
-              message: '查询成功！',
-              type: 'success'
-            })
             this.pageTotal = res.testcases.length
             this.tableData = res.testcases
           })
