@@ -3,30 +3,30 @@
     <el-card style="margin-top: 20px;">
       <el-form :inline="true" :model="formInline" ref="formInline">
         <el-form-item label="接口名称" prop="if_name">
-          <el-input v-model="formInline.if_name" placeholder=""></el-input>
+          <el-input v-model="formInline.if_name" size="mini" placeholder=""></el-input>
         </el-form-item>
         <el-form-item label="项目" prop="project_id">
-          <el-select v-model="formInline.project_id" clearable @change="querySystemList" placeholder=""
+          <el-select v-model="formInline.project_id" clearable @change="querySystemList($event, formInline.project_id)" size="mini" placeholder=""
                      style="width:100%">
             <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="子系统" prop="sys_id">
-          <el-select v-model="formInline.sys_id" clearable placeholder="" style="width:100%">
+          <el-select v-model="formInline.sys_id" clearable size="mini" placeholder="" style="width:100%">
             <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleQuery('formInline')">查询</el-button>
+          <el-button type="primary" size="mini" @click="handleQuery('formInline')">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" @click="handleAdd()">新增</el-button>
+          <el-button type="primary" size="mini" @click="handleAdd()">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table
         :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         style="width: 100%">
-        <el-table-column label="ID">
+        <el-table-column label="ID" width="50">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.id }}</span>
           </template>
@@ -93,40 +93,40 @@
       <el-dialog title="接口信息" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="名称" label-width="120px">
-            <el-input v-model="form.if_name" auto-complete="off"></el-input>
+            <el-input v-model="form.if_name" size="mini" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="方法" prop="if_method" label-width="120px">
-            <el-select v-model="form.if_method" placeholder="" style="width:100%">
+            <el-select v-model="form.if_method" size="mini" placeholder="" style="width:100%">
               <el-option v-for="item in methodList" :key="item.value" :label="item.label"
                          :value="item.value"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="协议" prop="if_protocol" label-width="120px">
-            <el-select v-model="form.if_protocol" placeholder="" style="width:100%">
+            <el-select v-model="form.if_protocol" size="mini" placeholder="" style="width:100%">
               <el-option v-for="item in protocolList" :key="item.value" :label="item.label"
                          :value="item.value"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="路径" label-width="120px">
-            <el-input v-model="form.if_url" auto-complete="off"></el-input>
+            <el-input v-model="form.if_url" size="mini" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="项目" prop="project_id" label-width="120px">
-            <el-select v-model="form.project_id" @change="onSelectedProDrug" placeholder="" style="width:100%">
+            <el-select v-model="form.project_id" @change="querySystemList($event, form.project_id)" size="mini" placeholder="" style="width:100%">
               <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="子系统" prop="system_id" label-width="120px">
-            <el-select v-model="form.system_id" @change="onSelectedSysDrug" placeholder="" style="width:100%">
+            <el-select v-model="form.system_id" @change="onSelectedSysDrug" size="mini" placeholder="" style="width:100%">
               <el-option v-for="item in sysList" :key="item.id" :label="item.sys_name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="描述" label-width="120px">
-            <el-input type="textarea" :rows="2" v-model="form.if_desc" auto-complete="off"></el-input>
+            <el-input type="textarea" :rows="2" v-model="form.if_desc" size="mini" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="modifyUser()">确 定</el-button>
+          <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" size="mini" @click="modifyInterface">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -193,9 +193,13 @@ export default {
         this.proList = res.projects
       })
     },
-    querySystemList () {
-      requestSystemBySearch(this.formInline).then(res => {
+    querySystemList (projectId) {
+      requestSystemBySearch({ 'project_id': projectId }).then(res => {
         this.sysList = res.systems
+        if (this.sysList.length > 0) {
+          this.formInline.sys_id = ''
+        }
+        // this.formInline.sys_id = this.sysList.length > 0 ? this.sysList[0]['id'] : ''
       })
     },
     handleQuery (formName) {
@@ -260,7 +264,7 @@ export default {
     handleCurrentChange (currentPage) {
       this.currentPage = currentPage
     },
-    modifyUser () {
+    modifyInterface () {
       this.dialogFormVisible = false
       if (this.form.dialogType === 'add') {
         addInterface(this.form).then(res => {
@@ -286,8 +290,8 @@ export default {
         })
       }
     },
-    onSelectedProDrug (e) {
-      this.querySystemList()
+    onSelectedProDrug (e, projectId) {
+      this.querySystemList(projectId)
       let obj = {}
       obj = this.proList.find((item) => { // 这里的proList就是上面遍历的数据源
         return item.id === e// 筛选出匹配数据

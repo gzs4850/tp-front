@@ -3,19 +3,19 @@
     <el-card style="margin-top: 20px;">
       <el-form :inline="true" :model="formInline" ref="formInline" :rules="rules">
         <el-form-item label="项目名称：" prop="pro_name">
-          <el-input v-model="formInline.pro_name" placeholder="请输入"></el-input>
+          <el-input v-model="formInline.pro_name" size="mini" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleQuery('formInline')">查询</el-button>
+          <el-button type="primary" size="mini" @click="handleQuery('formInline')">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right" >
-          <el-button type="primary" @click="handleAdd()">新增</el-button>
+          <el-button type="primary" size="mini" @click="handleAdd">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table
         :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         style="width: 100%">
-        <el-table-column label="ID">
+        <el-table-column label="ID" width="50">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.id }}</span>
           </template>
@@ -62,15 +62,15 @@
       <el-dialog title="项目信息" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="名称" label-width="120px">
-            <el-input v-model="form.pro_name" auto-complete="off"></el-input>
+            <el-input v-model="form.pro_name" size="mini" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="描述" label-width="120px">
-            <el-input type="textarea" :rows="2" v-model="form.pro_desc" auto-complete="off"></el-input>
+            <el-input type="textarea" :rows="2" v-model="form.pro_desc" size="mini" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="modifyUser()">确 定</el-button>
+          <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" size="mini" @click="modifyProject">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -125,7 +125,6 @@ export default {
                 message: '查询成功！',
                 type: 'success'
               })
-              // console.log('projects:', res.projects)
               this.pageTotal = res.projects.length
               this.tableData = res.projects
             })
@@ -167,7 +166,7 @@ export default {
     handleCurrentChange (currentPage) {
       this.currentPage = currentPage
     },
-    modifyUser () {
+    modifyProject () {
       this.dialogFormVisible = false
       if (this.form.dialogType === 'add') {
         addProject({ 'pro_name': this.form.pro_name, 'pro_desc': this.form.pro_desc }).then(res => {

@@ -897,7 +897,7 @@ export default {
             type: 'success'
           })
         })
-        this.handleQuery('formInline')
+        this.caseQuery('formInline')
       } else {
         updateIfcase(this.form.id, this.form).then(res => {
           this.tableData[this.form.index].case_name = this.form.case_name

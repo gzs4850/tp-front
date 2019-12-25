@@ -3,7 +3,7 @@
     <el-card style="margin-top: 20px;">
       <el-form :inline="true">
         <el-form-item >
-          <b>环境URL列表</b>
+          <b>定时任务列表</b>
         </el-form-item>
         <el-form-item style="float:right" >
           <el-button type="primary" size="small" @click="urlAdd">新增</el-button>
@@ -17,29 +17,34 @@
             <span style="margin-left: 10px">{{ scope.row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="URL名称">
+        <el-table-column label="任务名称">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.url_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="测试URL">
+        <el-table-column label="类型">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.url_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="内容">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.url_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="定时器（秒 分 时 日 月 周）">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.qa_url }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="生产URL">
+        <el-table-column label="下次执行时间">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.pro_url }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="子系统">
+        <el-table-column label="状态">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.sys_name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="项目">
-          <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.pro_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -66,15 +71,18 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="pageTotal">
       </el-pagination>
-      <el-dialog title="BASE_URL信息" :visible.sync="dialogFormVisible">
+      <el-dialog title="定时任务信息" :visible.sync="dialogFormVisible">
         <el-form :model="form">
-          <el-form-item label="URL名称" label-width="120px">
+          <el-form-item label="任务名称" label-width="120px">
             <el-input v-model="form.url_name" size="small" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="测试环境" label-width="120px">
+          <el-form-item label="类型" label-width="120px">
+            <el-input v-model="form.url_name" size="small" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="内容" label-width="120px">
             <el-input v-model="form.qa_url" size="small" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="开发环境" label-width="120px">
+          <el-form-item label="任务定时器" label-width="120px">
             <el-input v-model="form.pro_url" size="small" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="项目" prop="project_id" label-width="120px">
@@ -102,7 +110,7 @@ import { requestAllSystem } from '@/api/system'
 import { requestAllProject } from '@/api/project'
 import { getBaseurl, addBaseurl, updateBaseurl, delBaseurl } from '@/api/baseurl'
 export default {
-  name: 'PageEnv',
+  name: 'PageSchedule',
   data () {
     return {
       tableData: [],

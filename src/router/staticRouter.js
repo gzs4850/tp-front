@@ -119,7 +119,7 @@ const staticRouter = [
             path: '/user/password',
             name: 'userPassword',
             title: '定时任务',
-            component: () => import('@/views/pages/user/PageUserPassword')
+            component: () => import('@/views/pages/schedule/PageSchedule')
           }
         ]
       }, {

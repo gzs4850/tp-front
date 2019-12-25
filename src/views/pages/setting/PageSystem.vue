@@ -3,24 +3,24 @@
     <el-card style="margin-top: 20px;">
       <el-form :inline="true" :model="formInline" ref="formInline">
         <el-form-item label="子系统名称：" prop="sys_name">
-          <el-input v-model="formInline.sys_name" placeholder=""></el-input>
+          <el-input v-model="formInline.sys_name" size="mini" placeholder=""></el-input>
         </el-form-item>
         <el-form-item label="项目：" prop="project_id">
-          <el-select v-model="formInline.project_id" clearable placeholder="" style="width:100%">
+          <el-select v-model="formInline.project_id" clearable size="mini" placeholder="" style="width:100%">
             <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleQuery('formInline')">查询</el-button>
+          <el-button type="primary" size="mini" @click="handleQuery('formInline')">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right" >
-          <el-button type="primary" @click="handleAdd()">新增</el-button>
+          <el-button type="primary" size="mini" @click="handleAdd()">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table
         :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         style="width: 100%">
-        <el-table-column label="ID">
+        <el-table-column label="ID" width="50">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.id }}</span>
           </template>
@@ -72,20 +72,20 @@
       <el-dialog title="子系统信息" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="名称" label-width="120px">
-            <el-input v-model="form.sys_name" auto-complete="off"></el-input>
+            <el-input v-model="form.sys_name" size="mini" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="项目" prop="project_id" label-width="120px">
-            <el-select v-model="form.project_id" placeholder="" @change="onSelectedDrug" style="width:100%">
+            <el-select v-model="form.project_id" size="mini" placeholder="" @change="onSelectedDrug" style="width:100%">
               <el-option v-for="item in proList" :key="item.id" :label="item.pro_name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="描述" label-width="120px">
-            <el-input type="textarea" :rows="2" v-model="form.sys_desc" auto-complete="off"></el-input>
+            <el-input type="textarea" :rows="2" v-model="form.sys_desc" size="mini" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="modifyUser()">确 定</el-button>
+          <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" size="mini" @click="modifyUser()">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -119,7 +119,7 @@ export default {
     }
   },
   methods: {
-    queryAll () {
+    queryAllSystem () {
       requestAllSystem().then(res => {
         this.pageTotal = res.systems.length
         this.tableData = res.systems
@@ -136,7 +136,7 @@ export default {
         console.log('project_id:', this.formInline.project_id)
         if (valid) {
           if (this.formInline.sys_name === '' && this.formInline.project_id === '') {
-            this.queryAll()
+            this.queryAllSystem()
           } else {
             console.log('formInline----', this.formInline)
             requestSystemBySearch(this.formInline).then(res => {
@@ -198,7 +198,7 @@ export default {
             type: 'success'
           })
         })
-        this.queryAll()
+        this.queryAllSystem()
       } else {
         updateSystem(this.form.id, { 'sys_name': this.form.sys_name, 'project_id': this.form.project_id, 'sys_desc': this.form.sys_desc }).then(res => {
           this.tableData[this.form.index].sys_name = this.form.sys_name
@@ -222,7 +222,7 @@ export default {
     }
   },
   mounted: function () {
-    this.queryAll()
+    this.queryAllSystem()
     this.queryProjectList()
   }
 }
