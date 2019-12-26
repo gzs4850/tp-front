@@ -2,7 +2,7 @@
   <div style="width: 100%;">
     <el-card style="margin-top: 20px;">
       <el-row :gutter="20">
-        <el-col :span="8">
+        <el-col :span="7">
           <el-form :inline="true" :model="formInline" ref="formInline">
             <el-row>
               <el-col :span="8">
@@ -88,38 +88,18 @@
             :total="pageTotal">
           </el-pagination>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="10">
           <el-form :inline="true" :model="baseInfo" ref="formInline" :disabled="able">
             <el-row>
-              <el-col :span="6">
-                <el-form-item label="名称" prop="case_name">
-                  <el-input v-model="baseInfo.case_name" size="small" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="URL" prop="case_url">
-                  <el-input v-model="baseInfo.url" size="small" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="7">
-                <el-form-item label="环境" prop="base_url">
-                  <el-select v-model="baseInfo.base_url" size="small" placeholder="">
-                    <el-option v-for="item in envOptions" :key="item.value" :label="item.label"
-                               :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="5">
-                <el-form-item>
-                  <el-button type="primary" size="mini" @click="save">保存</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" size="mini" @click="run">调试</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" size="mini" @click="queryResult">看结果</el-button>
-                </el-form-item>
-              </el-col>
+              <el-form-item label="名称" prop="case_name">
+                <el-input v-model="baseInfo.case_name" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="URL" prop="case_url">
+                <el-input v-model="baseInfo.url" size="small" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item style="float:right">
+                <el-button type="primary" size="mini" @click="save">保存</el-button>
+              </el-form-item>
             </el-row>
           </el-form>
 
@@ -430,6 +410,47 @@
             </el-tab-pane>
           </el-tabs>
         </el-col>
+        <el-col :span="7">
+          <el-form :inline="true" :model="resultInfo" ref="formInline" :disabled="able">
+            <el-row>
+              <el-form-item label="环境" prop="base_url">
+                <el-select v-model="resultInfo.base_url" size="small" placeholder="">
+                  <el-option v-for="item in envOptions" :key="item.value" :label="item.label"
+                             :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item style="float:right">
+                <el-button type="primary" size="mini" @click="run">调试</el-button>
+              </el-form-item>
+            </el-row>
+          </el-form>
+          <div>
+            <strong>调试结果</strong>
+            <ul>
+              <li><label>用例名称:</label>{{resultInfo.case_name}}</li>
+              <li><label>测试结果:</label>{{resultInfo.test_result}}</li>
+              <li><label>测试时间:</label>{{resultInfo.timestamp}}</li>
+              <li><label>耗时:</label>{{resultInfo.real_rsp_time}}</li>
+              <li><label>请求地址:</label><br>{{resultInfo.real_req_path}}</li>
+              <li><label>请求头:</label><br>{{resultInfo.real_req_head}}</li>
+              <li><label>请求体:</label><br>{{resultInfo.real_req_json}}</li>
+              <li><label>响应头:</label><br>{{resultInfo.real_rsp_head}}</li>
+              <li><label>响应体:</label><br>{{resultInfo.real_rsp_json}}</li>
+              <li><label>断言结果:</label><br>{{resultInfo.assert_msg}}</li>
+            </ul>
+          </div>
+<!--          用例名称:<span>{{resultInfo.case_name}}</span><br>-->
+<!--          测试结果:<span>{{resultInfo.test_result}}</span><br>-->
+<!--          测试时间:<span>{{resultInfo.timestamp}}</span><br>-->
+<!--          耗时:<span>{{resultInfo.real_rsp_time}}</span><br>-->
+<!--          响应码:<span>{{resultInfo.real_rsp_code}}</span><br>-->
+<!--          请求地址:<span>{{resultInfo.real_req_path}}</span><br>-->
+<!--          请求头:<span>{{resultInfo.real_req_head}}</span><br>-->
+<!--          请求体:<span>{{resultInfo.real_req_json}}</span><br>-->
+<!--          响应头:<span>{{resultInfo.real_rsp_head}}</span><br>-->
+<!--          响应体:<span>{{resultInfo.real_rsp_json}}</span><br>-->
+<!--          断言结果:<span>{{resultInfo.assert_msg}}</span><br>-->
+        </el-col>
         <el-dialog title="用例信息" :visible.sync="dialogFormVisible">
           <el-form :model="form">
             <el-form-item label="名称" label-width="120px">
@@ -513,46 +534,6 @@
           </div>
         </el-dialog>
 
-        <el-dialog title="调试结果" :visible.sync="dialogResultVisible">
-          <el-form :model="resForm">
-            <el-form-item label="用例名称:" label-width="120px">
-              <span>{{resForm.case_name}}</span>
-            </el-form-item>
-            <el-form-item label="测试结果:" label-width="120px">
-              <span>{{resForm.test_result}}</span>
-            </el-form-item>
-            <el-form-item label="测试时间:" label-width="120px">
-              <span>{{resForm.timestamp}}</span>
-            </el-form-item>
-            <el-form-item label="耗时:" label-width="120px">
-              <span>{{resForm.real_rsp_time}}</span>
-            </el-form-item>
-            <el-form-item label="响应码:" label-width="120px">
-              <span>{{resForm.real_rsp_code}}</span>
-            </el-form-item>
-            <el-form-item label="请求地址:" label-width="120px">
-              <span>{{resForm.real_req_path}}</span>
-            </el-form-item>
-            <el-form-item label="请求头:" label-width="120px">
-              <span>{{resForm.real_req_head}}</span>
-            </el-form-item>
-            <el-form-item label="请求体:" label-width="120px">
-              <span>{{resForm.real_req_json}}</span>
-            </el-form-item>
-            <el-form-item label="响应头:" label-width="120px">
-              <span>{{resForm.real_rsp_head}}</span>
-            </el-form-item>
-            <el-form-item label="响应体:" label-width="120px">
-              <span>{{resForm.real_rsp_json}}</span>
-            </el-form-item>
-            <el-form-item label="断言结果:" label-width="120px">
-              <span>{{resForm.assert_msg}}</span>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogResultVisible = false" size="mini">关 闭</el-button>
-          </div>
-        </el-dialog>
       </el-row>
     </el-card>
   </div>
@@ -642,8 +623,7 @@ export default {
         id: '',
         method: '',
         case_name: '',
-        url: '',
-        base_url: ''
+        url: ''
       },
       tableCaseref: [],
       refForm: {
@@ -670,7 +650,8 @@ export default {
         check_json: {},
         request_json: {}
       },
-      resForm: {
+      resultInfo: {
+        base_url: '',
         case_name: '',
         test_result: '',
         timestamp: '',
@@ -747,6 +728,7 @@ export default {
       })
       this.getReflist(row.id)
       this.toDisable()
+      this.queryResult(row.id)
     },
     toDisable () {
       console.log('this.baseInfo.id----', this.baseInfo.id)
@@ -807,8 +789,8 @@ export default {
       })
     },
     run () {
-      if (this.baseInfo.base_url) {
-        runIfcase(this.baseInfo.id, { 'env': this.baseInfo.base_url }).then(res => {
+      if (this.resultInfo.base_url) {
+        runIfcase(this.baseInfo.id, { 'env': this.resultInfo.base_url }).then(res => {
           this.$message({
             message: '运行成功！',
             type: 'success'
@@ -817,13 +799,14 @@ export default {
       } else {
         this.$message.error('请选择调试环境！')
       }
+      this.queryResult(this.baseInfo.id)
     },
-    queryResult () {
-      getResult(this.baseInfo.id, {}).then(res => {
-        this.resForm = res.testresult
-        this.resForm.case_name = this.baseInfo.case_name
+    queryResult (caseId) {
+      getResult(caseId, {}).then(res => {
+        this.resultInfo = res.testresult
+        this.resultInfo.case_name = this.baseInfo.case_name
       })
-      this.dialogResultVisible = true
+      // this.dialogResultVisible = true
     },
     getReflist (caseId) {
       getRefercase(caseId).then(res => {
@@ -1095,4 +1078,7 @@ export default {
 </script>
 
 <style scoped>
+ul {
+  list-style:none;
+}
 </style>
