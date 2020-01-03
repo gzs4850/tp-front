@@ -425,7 +425,7 @@
             </el-row>
           </el-form>
           <div>
-            <strong>调试结果</strong>
+            <Strong>调试结果</Strong>
             <ul>
               <li><label>用例名称:</label>{{resultInfo.case_name}}</li>
               <li><label>测试结果:</label>{{resultInfo.test_result}}</li>
