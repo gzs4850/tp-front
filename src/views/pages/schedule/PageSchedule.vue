@@ -19,7 +19,7 @@
         </el-table-column>
         <el-table-column label="执行对象">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.cmd }}</span>
+            <span style="margin-left: 10px">{{ scope.row.project_name }}{{ scope.row.system_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="定时器（秒 分 时 日 月 周）">
@@ -145,7 +145,6 @@ export default {
         id: '',
         job_type: '',
         env: '',
-        cmd: '',
         cron: '',
         system_id: '',
         project_id: '',
@@ -161,10 +160,8 @@ export default {
       })
     },
     jobPause (index, row) {
-      console.log('row-----', row)
       jobPause({ id: row.id }).then(res => {
         this.$message({
-          // row.status = 'stop',
           message: '暂定' + row.id + '成功！',
           type: 'success'
         })
@@ -198,7 +195,7 @@ export default {
       this.form.index = ''
       this.form.id = ''
       this.form.job_type = ''
-      this.form.cmd = ''
+      this.form.env = ''
       this.form.cron = ''
       this.form.system_id = ''
       this.form.project_id = ''
@@ -211,12 +208,13 @@ export default {
       this.form.dialogType = 'edit'
       this.form.index = index + (this.currentPage - 1) * this.pageSize
       this.form.id = row.id
-      this.form.cmd = row.cmd
+      this.form.env = row.env
       this.form.job_type = row.job_type
       this.form.cron = row.cron
       this.form.system_id = row.system_id
       this.form.project_id = row.project_id
       this.dialogFormVisible = true
+      console.log('--------form------', this.form)
     },
     jobDelete (index, row) {
       this.tableData.splice(index + (this.currentPage - 1) * this.pageSize, 1)
@@ -235,7 +233,6 @@ export default {
       this.currentPage = currentPage
     },
     modifyJob () {
-      console.log('--------form------', this.form)
       this.dialogFormVisible = false
       if (this.form.dialogType === 'add') {
         jobAdd(this.form).then(res => {
@@ -245,11 +242,12 @@ export default {
           })
         })
       } else {
-        jobEdit(this.form.id, this.form).then(res => {
+        console.log('--------form------', this.form)
+        jobEdit(this.form).then(res => {
           this.tableData[this.form.index].id = this.form.id
           this.tableData[this.form.index].job_type = this.form.job_type
           this.tableData[this.form.index].cron = this.form.cron
-          this.tableData[this.form.index].cmd = this.form.cmd
+          this.tableData[this.form.index].env = this.form.env
           this.tableData[this.form.index].pro_name = this.form.pro_name
           this.tableData[this.form.index].sys_name = this.form.sys_name
           this.$message({
