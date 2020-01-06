@@ -116,8 +116,8 @@ const staticRouter = [
         component: () => import('@/views/layout/TheLayoutEmpty'),
         children: [
           {
-            path: '/user/password',
-            name: 'userPassword',
+            path: '/schedule/jobmgr',
+            name: 'jobmgr',
             title: '定时任务',
             component: () => import('@/views/pages/schedule/PageSchedule')
           }

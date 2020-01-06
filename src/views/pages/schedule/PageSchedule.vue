@@ -19,7 +19,7 @@
         </el-table-column>
         <el-table-column label="执行对象">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.project_name }}{{ scope.row.system_name }}</span>
+            <span style="margin-left: 10px">{{ scope.row.project_id }} | {{ scope.row.system_id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="定时器（秒 分 时 日 月 周）">
@@ -77,7 +77,7 @@
       <el-dialog title="定时任务信息" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="任务名称" label-width="120px">
-            <el-input v-model="form.id" size="small" auto-complete="off"></el-input>
+            <el-input v-model="form.id" size="small" auto-complete="off" :disabled="form.dialogType === 'edit'"></el-input>
           </el-form-item>
           <el-form-item label="任务类型" label-width="120px">
             <el-select v-model="form.job_type" size="small" placeholder="请选择任务类型" style="width:100%">
@@ -185,9 +185,10 @@ export default {
     querySystemList (projectId) {
       requestAllSystem({ 'project_id': projectId }).then(res => {
         this.sysList = res.systems
-        if (this.sysList.length === 0) {
-          this.form.system_id = ''
-        }
+        this.form.system_id = this.sysList.length > 0 ? this.sysList[0]['id'] : ''
+        // if (this.sysList.length === 0) {
+        //   this.form.system_id = ''
+        // }
       })
     },
     jobAdd () {

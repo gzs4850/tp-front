@@ -132,8 +132,8 @@ export default {
     },
     handleQuery (formName) {
       this.$refs[formName].validate((valid) => {
-        console.log('sys_name:', this.formInline.sys_name)
-        console.log('project_id:', this.formInline.project_id)
+        // console.log('sys_name:', this.formInline.sys_name)
+        // console.log('project_id:', this.formInline.project_id)
         if (valid) {
           if (this.formInline.sys_name === '' && this.formInline.project_id === '') {
             this.queryAllSystem()

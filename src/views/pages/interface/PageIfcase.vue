@@ -428,7 +428,9 @@
             <Strong>调试结果</Strong>
             <ul>
               <li><label>用例名称:</label>{{resultInfo.case_name}}</li>
+              <hr>
               <li><label>测试结果:</label>{{resultInfo.test_result}}</li>
+              <el-divider></el-divider>
               <li><label>测试时间:</label>{{resultInfo.timestamp}}</li>
               <li><label>耗时:</label>{{resultInfo.real_rsp_time}}</li>
               <li><label>请求地址:</label><br>{{resultInfo.real_req_path}}</li>
@@ -1080,5 +1082,6 @@ export default {
 <style scoped>
 ul {
   list-style:none;
+  word-break:break-all;
 }
 </style>
