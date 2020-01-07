@@ -7,3 +7,7 @@ export const getResultlist = params => {
 export const getResult = (id, params) => {
   return request('/api/testresults/' + id, params, { 'method': 'get' })
 }
+
+export const getResultStatistic = params => {
+  return request('/api/resultstatistic', params, { 'method': 'get' })
+}
