@@ -424,32 +424,19 @@
               </el-form-item>
             </el-row>
           </el-form>
-          <div>
-            <Strong>调试结果</Strong>
-            <ul>
-              <li><label>用例名称:</label>{{resultInfo.case_name}}</li>
-              <li><label>测试结果:</label>{{resultInfo.test_result}}</li>
-              <li><label>测试时间:</label>{{resultInfo.timestamp}}</li>
-              <li><label>耗时:</label>{{resultInfo.real_rsp_time}}</li>
-              <li><label>请求地址:</label><br>{{resultInfo.real_req_path}}</li>
-              <li><label>请求头:</label><br>{{resultInfo.real_req_head}}</li>
-              <li><label>请求体:</label><br>{{resultInfo.real_req_json}}</li>
-              <li><label>响应头:</label><br>{{resultInfo.real_rsp_head}}</li>
-              <li><label>响应体:</label><br>{{resultInfo.real_rsp_json}}</li>
-              <li><label>断言结果:</label><br>{{resultInfo.assert_msg}}</li>
-            </ul>
+          <div style="padding: 20px;margin: -20px">
+              <p style="font-weight: bold;text-align: center">调试结果</p>
+              <p>用例名称：{{resultInfo.case_name}}</p>
+              <p>测试结果：{{resultInfo.test_result}}</p>
+              <p>测试时间：{{resultInfo.timestamp}}</p>
+              <p>测试时间：{{resultInfo.timestamp}}</p>
+              <p>请求地址：<br>{{resultInfo.real_req_path}}</p>
+              <p>请求头：<br>{{resultInfo.real_req_head}}</p>
+              <p>请求体：<br>{{resultInfo.real_req_json}}</p>
+              <p>响应头：<br>{{resultInfo.real_rsp_head}}</p>
+              <p>响应体：<br>{{resultInfo.real_rsp_json}}</p>
+              <p>断言结果：<br>{{resultInfo.assert_msg}}</p>
           </div>
-<!--          用例名称:<span>{{resultInfo.case_name}}</span><br>-->
-<!--          测试结果:<span>{{resultInfo.test_result}}</span><br>-->
-<!--          测试时间:<span>{{resultInfo.timestamp}}</span><br>-->
-<!--          耗时:<span>{{resultInfo.real_rsp_time}}</span><br>-->
-<!--          响应码:<span>{{resultInfo.real_rsp_code}}</span><br>-->
-<!--          请求地址:<span>{{resultInfo.real_req_path}}</span><br>-->
-<!--          请求头:<span>{{resultInfo.real_req_head}}</span><br>-->
-<!--          请求体:<span>{{resultInfo.real_req_json}}</span><br>-->
-<!--          响应头:<span>{{resultInfo.real_rsp_head}}</span><br>-->
-<!--          响应体:<span>{{resultInfo.real_rsp_json}}</span><br>-->
-<!--          断言结果:<span>{{resultInfo.assert_msg}}</span><br>-->
         </el-col>
         <el-dialog title="用例信息" :visible.sync="dialogFormVisible">
           <el-form :model="form">
@@ -1078,7 +1065,7 @@ export default {
 </script>
 
 <style scoped>
-ul {
+p {
   list-style:none;
   word-break:break-all;
 }

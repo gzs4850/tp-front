@@ -47,99 +47,18 @@
       </el-col>
     </el-row>
     <el-row :gutter="20">
-      <el-col :sm="24" :lg="18">
-        <el-card class="m-box-card" shadow="hover">
-          <ve-line :data="chartData1" :settings="chartSettings1"></ve-line>
-        </el-card>
-      </el-col>
       <el-col :sm="24" :lg="6">
         <el-row :gutter="20" align>
           <el-col :sm="12" :lg="24">
-            <el-card class="m-box-card" shadow="hover"
-                     style="height: 215px;background-color: rgb(143, 201, 251);color:#ffffff;">
-              <div slot="header">
-                <p style="text-align: center">
-                  <i class="el-icon-user-solid" style="color: #F56C6C;font-size: 35px;"></i>
-                </p>
-                <div style="padding-top: 10px;">
-                  <p>账号：{{ user.name }}</p>
-                  <p>时间：{{ user.loginTime }}</p>
-                  <p>地址：{{ user.loginIp }}</p>
-                </div>
-              </div>
-              <div style="font-size: 12px;">
-                <p>上次登录时间：{{ user.lastTime }}</p>
-                <p>上次登录地址：{{ user.lastIp }}</p>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :sm="12" :lg="24">
             <el-card class="m-box-card" shadow="hover">
-              <div
-                style="height: 215px; margin: -20px;background-color: rgb(247, 151, 214);color:#ffffff;overflow: auto">
-                <div style="padding: 20px;">
-                  <p style="font-weight: bold;text-align: center">重要通知</p>
-                  <p v-for="index in 20" :key="index">{{index}}. 帅哥/美女出没，请注意！</p>
-                  <p>~(˘▾˘~)~(˘▾˘~)</p>
-                  <p>对面的帅哥/美女，你好啊。</p>
-                </div>
-              </div>
+              <ve-pie :data="chartData2" :settings="chartSettings2"></ve-pie>
             </el-card>
           </el-col>
         </el-row>
       </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :sm="24" :lg="12">
-        <el-card class="m-box-card" shadow="hover" style="height: 300px;">
-          <el-table :data="tableData2" style="width: 100%" :row-class-name="tableRowClassName">
-            <el-table-column prop="date" label="日期" width="130"></el-table-column>
-            <el-table-column prop="name" label="姓名" width="80"></el-table-column>
-            <el-table-column prop="address" label="地址"></el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-      <el-col :sm="24" :lg="12">
-        <el-card class="m-box-card" shadow="hover" style="height: 300px">
-          <p style="text-align: center;font-size: 25px;padding: 20px;">任务进度</p>
-          <div class="m-task-box">
-            <div class="m-task-text">语文：</div>
-            <div class="m-task-pro">
-              <el-progress :text-inside="true" :stroke-width="18" :percentage="0"></el-progress>
-            </div>
-          </div>
-          <div class="m-task-box">
-            <div class="m-task-text">数学：</div>
-            <div class="m-task-pro">
-              <el-progress :text-inside="true" :stroke-width="18" :percentage="70"></el-progress>
-            </div>
-          </div>
-          <div class="m-task-box">
-            <div class="m-task-text">英语：</div>
-            <div class="m-task-pro">
-              <el-progress :text-inside="true" :stroke-width="18" :percentage="80"
-                           color="rgba(142, 113, 199, 0.7)"></el-progress>
-            </div>
-          </div>
-          <div class="m-task-box">
-            <div class="m-task-text">生物：</div>
-            <div class="m-task-pro">
-              <el-progress :text-inside="true" :stroke-width="18" :percentage="100" status="success"></el-progress>
-            </div>
-          </div>
-          <div class="m-task-box">
-            <div class="m-task-text">地理：</div>
-            <div class="m-task-pro">
-              <el-progress :text-inside="true" :stroke-width="18" :percentage="50" status="exception"></el-progress>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="24">
+      <el-col :sm="24" :lg="18">
         <el-card class="m-box-card" shadow="hover">
-          <ve-scatter :data="chartData2" :settings="chartSettings2"></ve-scatter>
+          <ve-line :data="chartData1" :settings="chartSettings1"></ve-line>
         </el-card>
       </el-col>
     </el-row>
@@ -153,13 +72,14 @@ import { requestInterface } from '@/api/interface'
 import { requestIfcaselist } from '@/api/ifcase'
 import { getResultStatistic } from '@/api/testresult'
 import VeLine from 'v-charts/lib/line.common'
-import VeScatter from 'v-charts/lib/scatter.common'
+import VePie from 'v-charts/lib/pie.common'
+import 'echarts/lib/component/title'
 
 export default {
   name: 'PageHome',
   components: {
-    VeLine,
-    VeScatter
+    VePie,
+    VeLine
   },
   data () {
     return {
@@ -169,78 +89,28 @@ export default {
       ifcaseTotal: '',
       resultStatisticTotal: '',
       resultStatistic: [],
-      info: {
-        tasks: parseFloat(12).toLocaleString(),
-        message: parseFloat(6).toLocaleString(),
-        code: parseFloat(5234).toLocaleString(),
-        weather: '深圳，26℃，多云'
-      },
-      user: {
-        name: '张三',
-        loginTime: '2018-01-05 12:00:00',
-        loginIp: '172.28.12.34',
-        lastTime: '2018-01-01 12:00:00',
-        lastIp: '172.28.12.34'
-      },
       chartData1: {
         columns: ['time', 'pass', 'fail', 'rate'],
         rows: []
       },
       chartSettings1: {
+        labelMap: {
+          pass: '成功用例数',
+          fail: '失败用例数',
+          rate: '成功率'
+        },
         axisSite: { right: ['rate'] },
         yAxisType: ['KMB', 'percent'],
         yAxisName: ['用例数', '比率']
       },
       chartData2: {
-        columns: ['日期', '访问用户', '下单用户', '年龄'],
-        rows: {
-          '上海': [
-            { '日期': '1/1', '访问用户': 123, '年龄': 3, '下单用户': 1244 },
-            { '日期': '1/2', '访问用户': 1223, '年龄': 6, '下单用户': 2344 },
-            { '日期': '1/3', '访问用户': 7123, '年龄': 9, '下单用户': 3245 },
-            { '日期': '1/4', '访问用户': 4123, '年龄': 12, '下单用户': 4355 },
-            { '日期': '1/5', '访问用户': 3123, '年龄': 15, '下单用户': 4564 },
-            { '日期': '1/6', '访问用户': 2323, '年龄': 20, '下单用户': 6537 }
-          ],
-          '北京': [
-            { '日期': '1/1', '访问用户': 123, '年龄': 3, '下单用户': 1244 },
-            { '日期': '1/2', '访问用户': 1273, '年龄': 6, '下单用户': 2344 },
-            { '日期': '1/3', '访问用户': 3123, '年龄': 15, '下单用户': 4564 },
-            { '日期': '1/4', '访问用户': 2123, '年龄': 9, '下单用户': 3245 },
-            { '日期': '1/5', '访问用户': 4103, '年龄': 12, '下单用户': 4355 },
-            { '日期': '1/6', '访问用户': 7123, '年龄': 10, '下单用户': 3567 }
-          ],
-          '广州': [
-            { '日期': '1/1', '访问用户': 123, '年龄': 3, '下单用户': 1244 },
-            { '日期': '1/2', '访问用户': 1223, '年龄': 6, '下单用户': 2344 },
-            { '日期': '1/3', '访问用户': 2123, '年龄': 30, '下单用户': 3245 },
-            { '日期': '1/5', '访问用户': 4123, '年龄': 12, '下单用户': 4355 },
-            { '日期': '1/4', '访问用户': 5123, '年龄': 18, '下单用户': 4564 },
-            { '日期': '1/6', '访问用户': 3843, '年龄': 30, '下单用户': 4850 }
-          ]
-        }
+        columns: ['类别', '数量'],
+        rows: []
       },
       chartSettings2: {
-        dimension: '日期',
-        metrics: ['年龄', '下单用户']
-      },
-      tableData2: [{
-        date: '2013-07-21',
-        name: '张三',
-        address: '你是我的小苹果'
-      }, {
-        date: '2014-12-24',
-        name: '李四',
-        address: '怎么爱你都不嫌多'
-      }, {
-        date: '2017-07-01',
-        name: '王五',
-        address: '有了滑板鞋'
-      }, {
-        date: '2018-09-03',
-        name: '666',
-        address: '天黑都不怕'
-      }]
+        dimension: '类别',
+        metrics: '数量'
+      }
     }
   },
   methods: {
@@ -273,6 +143,10 @@ export default {
         this.resultStatisticTotal = res.testresult.length
         this.resultStatistic = res.testresult
         this.chartData1.rows = this.resultStatistic
+        this.chartData2.rows = [
+          { '类别': '成功', '数量': this.resultStatistic[0].pass },
+          { '类别': '失败', '数量': this.resultStatistic[0].fail }
+        ]
         console.log('resultStatistic----', this.resultStatistic)
       })
     },
