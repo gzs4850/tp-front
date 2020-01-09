@@ -26,7 +26,7 @@
       <el-col :xs="24" :sm="12" :lg="6">
         <el-card class="m-box-card" shadow="hover">
           <div class="m-icon">
-            <i class="el-icon-document" style="color: #67C23A;"></i>
+            <i class="el-icon-cpu" style="color: #67C23A;"></i>
           </div>
           <div class="m-content">
             <p>接口数</p>
@@ -37,7 +37,7 @@
       <el-col :xs="24" :sm="12" :lg="6">
         <el-card class="m-box-card" shadow="hover">
           <div class="m-icon">
-            <i class="el-icon-document" style="color: #67C23A;"></i>
+            <i class="el-icon-document" style="color: #c28c2c;"></i>
           </div>
           <div class="m-content">
             <p>接口用例数</p>
@@ -50,15 +50,33 @@
       <el-col :sm="24" :lg="6">
         <el-row :gutter="20" align>
           <el-col :sm="12" :lg="24">
+            <el-card class="m-box-card" shadow="hover" style="height: 90px;">
+              <div slot="header">
+                <p style="text-align: center">
+                  <i class="el-icon-info" style="margin-right: 10px"></i>
+                  <span>最近一次测试结果</span>
+                </p>
+                <div style="padding-top: 5px;font-size: 14px;">
+                  <p>
+                    <span style="color:#0000FF">总数：{{ lastResInfo.total }}</span>
+                    <span style="margin-left: 10px; color:#00FF00">成功：{{ lastResInfo.pass }}</span>
+                    <span style="margin-left: 10px; color:#FF0000">失败：{{ lastResInfo.fail }}</span>
+                  </p>
+                  <p>执行时间：{{ lastResInfo.time }}</p>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+          <el-col :sm="12" :lg="24">
             <el-card class="m-box-card" shadow="hover">
-              <ve-pie :data="chartData2" :settings="chartSettings2"></ve-pie>
+              <ve-pie :data="chartData2" :settings="chartSettings2" height="310px"></ve-pie>
             </el-card>
           </el-col>
         </el-row>
       </el-col>
       <el-col :sm="24" :lg="18">
         <el-card class="m-box-card" shadow="hover">
-          <ve-line :data="chartData1" :settings="chartSettings1"></ve-line>
+          <ve-line :data="chartData1" :settings="chartSettings1" :extend="extend"></ve-line>
         </el-card>
       </el-col>
     </el-row>
@@ -89,6 +107,15 @@ export default {
       ifcaseTotal: '',
       resultStatisticTotal: '',
       resultStatistic: [],
+      extend: {
+        series: {
+          label: {
+            normal: {
+              show: true
+            }
+          }
+        }
+      },
       chartData1: {
         columns: ['time', 'pass', 'fail', 'rate'],
         rows: []
@@ -110,7 +137,8 @@ export default {
       chartSettings2: {
         dimension: '类别',
         metrics: '数量'
-      }
+      },
+      lastResInfo: {}
     }
   },
   methods: {
@@ -147,7 +175,13 @@ export default {
           { '类别': '成功', '数量': this.resultStatistic[0].pass },
           { '类别': '失败', '数量': this.resultStatistic[0].fail }
         ]
-        console.log('resultStatistic----', this.resultStatistic)
+        this.lastResInfo = {
+          'time': this.resultStatistic[0].time,
+          'total': this.resultStatistic[0].total,
+          'pass': this.resultStatistic[0].pass,
+          'fail': this.resultStatistic[0].fail
+        }
+        // console.log('resultStatistic----', this.resultStatistic)
       })
     },
     tableRowClassName ({ row, rowIndex }) {

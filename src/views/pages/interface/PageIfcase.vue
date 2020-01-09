@@ -424,18 +424,21 @@
               </el-form-item>
             </el-row>
           </el-form>
-          <div style="padding: 20px;margin: -20px">
+          <div style="padding: 20px;margin: -20px;font-size: 14px;">
               <p style="font-weight: bold;text-align: center">调试结果</p>
-              <p>用例名称：{{resultInfo.case_name}}</p>
-              <p>测试结果：{{resultInfo.test_result}}</p>
-              <p>测试时间：{{resultInfo.timestamp}}</p>
-              <p>测试时间：{{resultInfo.timestamp}}</p>
-              <p>请求地址：<br>{{resultInfo.real_req_path}}</p>
-              <p>请求头：<br>{{resultInfo.real_req_head}}</p>
-              <p>请求体：<br>{{resultInfo.real_req_json}}</p>
-              <p>响应头：<br>{{resultInfo.real_rsp_head}}</p>
-              <p>响应体：<br>{{resultInfo.real_rsp_json}}</p>
-              <p>断言结果：<br>{{resultInfo.assert_msg}}</p>
+              <p>用例名称：<span>{{resultInfo.case_name}}</span></p>
+              <p>
+                测试结果：<span v-if="resultInfo.test_result==='pass'" style="color:#00FF00">{{resultInfo.test_result}}</span>
+                <span v-else-if="resultInfo.test_result==='fail'" style="color:#FF0000">{{resultInfo.test_result}}</span>
+              </p>
+              <p>测试时间：<span>{{resultInfo.timestamp}}</span></p>
+              <p>测试时间：<span>{{resultInfo.timestamp}}</span></p>
+              <p>请求地址：<br><span>{{resultInfo.real_req_path}}</span></p>
+              <p>请求头：<br><span>{{resultInfo.real_req_head}}</span></p>
+              <p>请求体：<br><span>{{resultInfo.real_req_json}}</span></p>
+              <p>响应头：<br><span>{{resultInfo.real_rsp_head}}</span></p>
+              <p>响应体：<br><span>{{resultInfo.real_rsp_json}}</span></p>
+              <p>断言结果：<br><span>{{resultInfo.assert_msg}}</span></p>
           </div>
         </el-col>
         <el-dialog title="用例信息" :visible.sync="dialogFormVisible">
