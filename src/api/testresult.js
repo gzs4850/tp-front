@@ -11,3 +11,7 @@ export const getResult = (id, params) => {
 export const getResultStatistic = params => {
   return request('/api/resultstatistic', params, { 'method': 'get' })
 }
+
+export const getBatchNumber = params => {
+  return request('/api/bacthnumber', params, { 'method': 'get' })
+}

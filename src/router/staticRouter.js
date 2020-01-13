@@ -120,6 +120,12 @@ const staticRouter = [
             name: 'jobmgr',
             title: '定时任务',
             component: () => import('@/views/pages/schedule/PageSchedule')
+          },
+          {
+            path: '/schedule/result',
+            name: 'result',
+            title: '测试结果',
+            component: () => import('@/views/pages/schedule/PageResult')
           }
         ]
       }, {
