@@ -28,44 +28,44 @@
         style="width: 100%">
         <el-table-column label="ID" width="50">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.id }}</span>
+            <span>{{ scope.row.id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.if_name }}</span>
+            <span>{{ scope.row.if_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="方法">
+        <el-table-column label="方法" width="100">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.if_method }}</span>
+            <span>{{ scope.row.if_method }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="协议">
+        <el-table-column label="协议" width="100">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.if_protocol }}</span>
+            <span>{{ scope.row.if_protocol }}</span>
           </template>
         </el-table-column>
         <el-table-column label="路径">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.if_url }}</span>
+            <span>{{ scope.row.if_url }}</span>
           </template>
         </el-table-column>
         <el-table-column label="子系统">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.sys_name }}</span>
+            <span>{{ scope.row.sys_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="项目">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.pro_name }}</span>
+            <span>{{ scope.row.pro_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="描述" width="180">
-          <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.if_desc }}</span>
-          </template>
-        </el-table-column>
+<!--        <el-table-column label="描述" width="180">-->
+<!--          <template slot-scope="scope">-->
+<!--            <span style="margin-left: 10px">{{ scope.row.if_desc }}</span>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button
@@ -76,6 +76,11 @@
               size="mini"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)">删除
+            </el-button>
+            <el-button
+              size="mini"
+              type="success"
+              @click="handleEdit(scope.$index, scope.row)">生成用例
             </el-button>
           </template>
         </el-table-column>

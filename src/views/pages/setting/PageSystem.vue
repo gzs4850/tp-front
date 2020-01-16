@@ -11,14 +11,14 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="mini" @click="handleQuery('formInline')">查询</el-button>
+          <el-button type="primary" size="mini" @click="queryBySearch('formInline')">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right" >
-          <el-button type="primary" size="mini" @click="handleAdd()">新增</el-button>
+          <el-button type="primary" size="mini" @click="systemAdd()">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table
-        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :data="tableData"
         style="width: 100%">
         <el-table-column label="ID" width="50">
           <template slot-scope="scope">
@@ -49,12 +49,12 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="handleEdit(scope.$index, scope.row)">编辑
+              @click="systemEdit(scope.$index, scope.row)">编辑
             </el-button>
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除
+              @click="systemDelete(scope.$index, scope.row)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -85,7 +85,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" size="mini" @click="modifyUser()">确 定</el-button>
+          <el-button type="primary" size="mini" @click="systemModify">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -93,8 +93,8 @@
 </template>
 
 <script>
-import { requestAllSystem, requestSystemBySearch, addSystem, updateSystem, delSystem } from '@/api/system'
-import { requestAllProject } from '@/api/project'
+import { requestSystems, addSystem, updateSystem, delSystem } from '@/api/system'
+import { requestProjects } from '@/api/project'
 export default {
   name: 'PageSystem',
   data () {
@@ -119,43 +119,28 @@ export default {
     }
   },
   methods: {
-    queryAllSystem () {
-      requestAllSystem().then(res => {
-        this.pageTotal = res.systems.length
-        this.tableData = res.systems
-      })
+    queryBySearch () {
+      this.resetCurrentPage()
+      this.systemQuery()
     },
     queryProjectList () {
-      requestAllProject().then(res => {
+      requestProjects().then(res => {
         this.proList = res.projects
       })
     },
-    handleQuery (formName) {
-      this.$refs[formName].validate((valid) => {
-        // console.log('sys_name:', this.formInline.sys_name)
-        // console.log('project_id:', this.formInline.project_id)
-        if (valid) {
-          if (this.formInline.sys_name === '' && this.formInline.project_id === '') {
-            this.queryAllSystem()
-          } else {
-            console.log('formInline----', this.formInline)
-            requestSystemBySearch(this.formInline).then(res => {
-              this.$message({
-                message: '查询成功！',
-                type: 'success'
-              })
-              // console.log('projects:', res.projects)
-              this.pageTotal = res.systems.length
-              this.tableData = res.systems
-            })
-          }
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+    systemQuery (formName) {
+      this.$set(this.formInline, 'currentPage', this.currentPage)
+      this.$set(this.formInline, 'pageSize', this.pageSize)
+      requestSystems(this.formInline).then(res => {
+        // this.$message({
+        //   message: '查询成功！',
+        //   type: 'success'
+        // })
+        this.pageTotal = res.count
+        this.tableData = res.systems
       })
     },
-    handleAdd () {
+    systemAdd () {
       this.form.dialogType = 'add'
       this.form.index = ''
       this.form.sys_name = ''
@@ -163,7 +148,7 @@ export default {
       this.form.sys_desc = ''
       this.dialogFormVisible = true
     },
-    handleEdit (index, row) {
+    systemEdit (index, row) {
       this.form.dialogType = 'edit'
       this.form.index = index + (this.currentPage - 1) * this.pageSize
       this.form.id = row.id
@@ -173,7 +158,7 @@ export default {
       this.form.sys_desc = row.sys_desc
       this.dialogFormVisible = true
     },
-    handleDelete (index, row) {
+    systemDelete (index, row) {
       this.tableData.splice(index + (this.currentPage - 1) * this.pageSize, 1)
       this.pageTotal = this.tableData.length
       delSystem(row.id, {}).then(res => {
@@ -184,12 +169,17 @@ export default {
       })
     },
     handleSizeChange (size) {
-      this.pagesize = size
+      this.pageSize = size
+      this.systemQuery()
     },
     handleCurrentChange (currentPage) {
       this.currentPage = currentPage
+      this.systemQuery()
     },
-    modifyUser () {
+    resetCurrentPage () {
+      this.currentPage = 1
+    },
+    systemModify () {
       this.dialogFormVisible = false
       if (this.form.dialogType === 'add') {
         addSystem({ 'sys_name': this.form.sys_name, 'project_id': this.form.project_id, 'sys_desc': this.form.sys_desc }).then(res => {
@@ -198,7 +188,7 @@ export default {
             type: 'success'
           })
         })
-        this.queryAllSystem()
+        this.systemQuery()
       } else {
         updateSystem(this.form.id, { 'sys_name': this.form.sys_name, 'project_id': this.form.project_id, 'sys_desc': this.form.sys_desc }).then(res => {
           this.tableData[this.form.index].sys_name = this.form.sys_name
@@ -222,7 +212,7 @@ export default {
     }
   },
   mounted: function () {
-    this.queryAllSystem()
+    this.systemQuery()
     this.queryProjectList()
   }
 }

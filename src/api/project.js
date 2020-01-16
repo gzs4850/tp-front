@@ -1,6 +1,6 @@
 import { request } from '../utils/request'
 
-export const requestAllProject = params => {
+export const requestProjects = params => {
   return request('/api/projects', params, { 'method': 'get' })
 }
 

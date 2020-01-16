@@ -6,14 +6,14 @@
           <el-input v-model="formInline.pro_name" size="mini" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" size="mini" @click="handleQuery('formInline')">查询</el-button>
+          <el-button type="primary" size="mini" @click="queryBySearch('formInline')">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right" >
-          <el-button type="primary" size="mini" @click="handleAdd">新增</el-button>
+          <el-button type="primary" size="mini" @click="projectAdd">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table
-        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :data="tableData"
         style="width: 100%">
         <el-table-column label="ID" width="50">
           <template slot-scope="scope">
@@ -39,12 +39,12 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="handleEdit(scope.$index, scope.row)">编辑
+              @click="projectEdit(scope.$index, scope.row)">编辑
             </el-button>
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除
+              @click="projectDelete(scope.$index, scope.row)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -70,7 +70,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" size="mini" @click="modifyProject">确 定</el-button>
+          <el-button type="primary" size="mini" @click="projectModify">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { requestAllProject, requestProjectByName, addProject, updateProject, delProject } from '@/api/project'
+import { requestProjects, addProject, updateProject, delProject } from '@/api/project'
 export default {
   name: 'PageProject',
   data () {
@@ -107,42 +107,38 @@ export default {
     }
   },
   methods: {
-    queryAll () {
-      requestAllProject().then(res => {
-        this.pageTotal = res.projects.length
+    queryBySearch () {
+      this.resetCurrentPage()
+      this.projectQuery()
+    },
+    projectQuery (formName) {
+      this.$set(this.formInline, 'currentPage', this.currentPage)
+      this.$set(this.formInline, 'pageSize', this.pageSize)
+      // this.$refs[formName].validate((valid) => {
+      //   // console.log('pro_name:', this.formInline.pro_name)
+      //   if (valid) {
+      requestProjects(this.formInline).then(res => {
+        this.$message({
+          message: '查询成功！',
+          type: 'success'
+        })
+        this.pageTotal = res.count
         this.tableData = res.projects
       })
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
-    handleQuery (formName) {
-      this.$refs[formName].validate((valid) => {
-        console.log('pro_name:', this.formInline.pro_name)
-        if (valid) {
-          if (this.formInline.pro_name === '') {
-            this.queryAll()
-          } else {
-            requestProjectByName(this.formInline.pro_name).then(res => {
-              this.$message({
-                message: '查询成功！',
-                type: 'success'
-              })
-              this.pageTotal = res.projects.length
-              this.tableData = res.projects
-            })
-          }
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
-    handleAdd () {
+    projectAdd () {
       this.form.dialogType = 'add'
       this.form.index = ''
       this.form.pro_name = ''
       this.form.pro_desc = ''
       this.dialogFormVisible = true
     },
-    handleEdit (index, row) {
+    projectEdit (index, row) {
       this.form.dialogType = 'edit'
       this.form.index = index + (this.currentPage - 1) * this.pageSize
       this.form.id = row.id
@@ -150,7 +146,7 @@ export default {
       this.form.pro_desc = row.pro_desc
       this.dialogFormVisible = true
     },
-    handleDelete (index, row) {
+    projectDelete (index, row) {
       this.tableData.splice(index + (this.currentPage - 1) * this.pageSize, 1)
       this.pageTotal = this.tableData.length
       delProject(row.id, {}).then(res => {
@@ -161,12 +157,17 @@ export default {
       })
     },
     handleSizeChange (size) {
-      this.pagesize = size
+      this.pageSize = size
+      this.projectQuery()
     },
     handleCurrentChange (currentPage) {
       this.currentPage = currentPage
+      this.projectQuery()
     },
-    modifyProject () {
+    resetCurrentPage () {
+      this.currentPage = 1
+    },
+    projectModify () {
       this.dialogFormVisible = false
       if (this.form.dialogType === 'add') {
         addProject({ 'pro_name': this.form.pro_name, 'pro_desc': this.form.pro_desc }).then(res => {
@@ -189,7 +190,7 @@ export default {
     }
   },
   mounted: function () {
-    this.queryAll()
+    this.projectQuery()
   }
 }
 </script>

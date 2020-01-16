@@ -22,7 +22,8 @@
         </el-form-item>
       </el-form>
       <el-table
-        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :data="tableData"
+        :row-style="checkDel"
         style="width: 100%">
         <el-table-column label="用例ID">
           <template slot-scope="scope">
@@ -49,7 +50,7 @@
             <span style="margin-left: 10px">{{ scope.row.timestamp }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作"  width="300">
+        <el-table-column label="操作" width="300">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -63,15 +64,15 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         background
-        :current-page="currentPage"
+        :current-page="formInline.currentPage"
         :page-sizes="[10, 20, 30, 40]"
-        :page-size="pageSize"
+        :page-size="formInline.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="pageTotal">
       </el-pagination>
       <el-dialog title="测试结果详情" :visible.sync="dialogFormVisible">
         <div style="padding: 20px;margin: -20px;font-size: 14px;">
-<!--          <p style="font-weight: bold;text-align: center">调试结果</p>-->
+          <!--          <p style="font-weight: bold;text-align: center">调试结果</p>-->
           <p>用例名称：<span>{{resultInfo.case_name}}</span></p>
           <p>
             测试结果：<span v-if="resultInfo.test_result==='pass'" style="color:#00FF00">{{resultInfo.test_result}}</span>
@@ -96,6 +97,7 @@
 
 <script>
 import { getBatchNumber, getResultlist } from '@/api/testresult'
+
 export default {
   name: 'PageResult',
   data () {
@@ -109,14 +111,16 @@ export default {
         value: 'fail',
         label: '失败'
       }],
-      currentPage: 1,
-      pageSize: 10,
+      // currentPage: 1,
+      // pageSize: 10,
       pageTotal: 0,
       dialogFormVisible: false,
       formInline: {
         batchNumber: '',
         case_name: '',
-        result: ''
+        result: '',
+        currentPage: 1,
+        pageSize: 10
       },
       resultInfo: {
         case_id: '',
@@ -141,10 +145,11 @@ export default {
     batchNumberQuery () {
       getBatchNumber().then(res => {
         for (let index in res.batchnumbers) {
-          // console.log('number---', res.batchnumbers[index])
+          // console.log('batchnumbers---', res.batchnumbers[index])
+          // console.log('time---', this.formatDate(res.batchnumbers[index]))
           this.batchNumberList.push({ key: res.batchnumbers[index], value: res.batchnumbers[index] })
         }
-        this.formInline.batchNumber = this.batchNumberList[0].value
+        this.formInline.batchNumber = this.batchNumberList[0].key
       })
     },
     resultQuery (formName) {
@@ -154,13 +159,15 @@ export default {
       })
     },
     handleSizeChange (size) {
-      this.pagesize = size
+      this.formInline.pageSize = size
+      this.resultQuery()
     },
     handleCurrentChange (currentPage) {
-      this.currentPage = currentPage
+      this.formInline.currentPage = currentPage
+      this.resultQuery()
     },
     resultDetail (index, row) {
-      this.resultInfo.index = index + (this.currentPage - 1) * this.pageSize
+      // this.resultInfo.index = index + (this.formInline.currentPage - 1) * this.formInline.pageSize
       this.resultInfo.case_id = row.case_id
       this.resultInfo.case_name = row.case_name
       this.resultInfo.test_result = row.test_result
@@ -176,6 +183,11 @@ export default {
       this.resultInfo.real_rsp_json = row.real_rsp_json
       this.resultInfo.assert_msg = row.assert_msg
       this.dialogFormVisible = true
+    },
+    checkDel: function (row) {
+      if (row.row.test_result === 'fail') {
+        return { 'color': '#FF0000' }
+      }
     }
   },
   mounted: function () {
@@ -187,7 +199,7 @@ export default {
 
 <style scoped>
 p {
-  list-style:none;
-  word-break:break-all;
+  list-style: none;
+  word-break: break-all;
 }
 </style>
